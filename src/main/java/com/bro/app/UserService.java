@@ -83,4 +83,8 @@ public class UserService {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
+    // @TODO pouvoir récupérer des bloqués
+    // @TODO ajouter des bloqués et supprimer la bromance
+    // @TODO supprimer un blocage.
 }

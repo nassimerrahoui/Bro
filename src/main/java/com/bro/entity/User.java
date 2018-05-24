@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity("user")
 public class User {
-
+    // @TODO ajouter une liste de gens bloqués
     @Id
     private ObjectId id;
 
@@ -26,6 +26,8 @@ public class User {
     private String token = "";
 
     private Boolean isGeolocalizable = false;
+
+    private List<User> ennemies;
 
     /**
      * constructeur vide pour le dao
@@ -74,4 +76,6 @@ public class User {
     public Boolean getIsGeolocalizable() {
         return isGeolocalizable;
     }
+
+    public List<User> getEnnemies() { return ennemies; }
 }
