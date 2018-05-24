@@ -17,9 +17,6 @@ public class Brotherhood {
     @Reference
     private User leader;
 
-    @Embedded
-    private HashMap<Boolean, User> users;
-
     /**
      * constructeur vide pour le dao
      */
@@ -32,7 +29,6 @@ public class Brotherhood {
     public Brotherhood(String name, User leader){
         this.name = name;
         this.leader = leader;
-        this.users.put(false, leader);
     }
 
     public ObjectId getId() {

@@ -21,12 +21,23 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         super(entityClass, ds);
     }
 
+    /**
+     * @TODO brotherhood: à déplacer dans BrotherhoodManager
+     * @param user
+     * @return
+     */
     public List<Brotherhood> getBrotherhoods(String user){
         return createQuery()
                 .field("users").hasThisOne(user)
                 .asList();
     }
 
+    /**
+     * @TODO brotherhood: à déplacer dans BrotherhoodManager
+     * @param name
+     * @param user
+     * @return
+     */
     public Optional<Brotherhood> getBrotherhood(String name, User user){
         return createQuery()
                 .field("name").equal(name)
@@ -34,6 +45,12 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                 .asList().stream().findAny();
     }
 
+    /**
+     * @TODO brotherhood: à deplacer dans BrotherhoodManager
+     * @param brotherhood
+     * @param user
+     * @return
+     */
     public UpdateResults addBro(Brotherhood brotherhood, User user){
         Query<Brotherhood> query = createQuery()
                 .field("_id").equal(brotherhood.getId());
@@ -45,7 +62,15 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return update(query, ops);
     }
 
-    public UpdateResults removeBro(Brotherhood brotherhood, User user){
+
+    /**
+     * Permet de supprimer un membre du groupe
+     * @param brotherhood
+     * @param user
+     * @return
+     * @TODO brotherhood: Supprimer le HashMap + Transfert BrotherhoodManager + empêcher de supprimer le leader
+     */
+    public UpdateResults removeBro(Brotherhood brotherhood, User user) {
         Query<Brotherhood> query = createQuery()
                 .field("_id").equal(brotherhood.getId());
 
@@ -56,18 +81,5 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
 
         return update(query, ops);
     }
-
-    public UpdateResults isGeolocalizable(Brotherhood brotherhood, User user, Boolean isGeolocalizable){
-        Query<Brotherhood> query = createQuery()
-                .field("_id").equal(brotherhood.getId())
-                .field("users.User").hasThisOne(user);
-
-        UpdateOperations<Brotherhood> ops = getDatastore()
-                .createUpdateOperations(Brotherhood.class)
-                .addToSet("users.Boolean",isGeolocalizable);
-
-        return update(query, ops);
-    }
-
-
+    // @TODO brotherhood: Modifier nom du groupe
 }

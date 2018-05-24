@@ -26,6 +26,7 @@ public class BrotherhoodService {
         return Response.status(Response.Status.CREATED).build();
     }
 
+    // @TODO brotherhood: à dégager
     @GET
     @Path("/{user}")
     public Response getBrotherhoods(@PathParam("user") String user) {
