@@ -24,7 +24,6 @@ import java.util.Optional;
 public class GeolocationService {
 
     private GeolocationDAO geolocationDAO = new GeolocationDAO(Geolocation.class, new MorphiaService().getDatastore());
-    private String geolocationURL = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBnTPSFkjYo08YsOS1rev2xrS8CbWg1qxU";
 
     @POST
     @Path("/create")
@@ -35,62 +34,5 @@ public class GeolocationService {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         return Response.status(Response.Status.CREATED).build();
-    }
-
-    @GET
-    @Path("/test")
-    public Response testGoogleMapApi() throws IOException {
-
-        URL geolocationAPI = new URL(geolocationURL);
-        HttpURLConnection connection = (HttpURLConnection) geolocationAPI.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
-
-        Gson g = new Gson();
-        String mygeolocation = g.toJson("{\n" +
-                "  \"considerIp\": \"false\",\n" +
-                "  \"wifiAccessPoints\": [\n" +
-                "    {\n" +
-                "        \"macAddress\": \"00:25:9c:cf:1c:ac\",\n" +
-                "        \"signalStrength\": -43,\n" +
-                "        \"signalToNoiseRatio\": 0\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"macAddress\": \"00:25:9c:cf:1c:ad\",\n" +
-                "        \"signalStrength\": -55,\n" +
-                "        \"signalToNoiseRatio\": 0\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
-
-        DataOutputStream wr = new DataOutputStream (connection.getOutputStream());
-        wr.writeBytes(mygeolocation);
-        wr.close();
-
-        InputStream is = connection.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        try{
-            if (HttpURLConnection.HTTP_OK == connection.getResponseCode()) {
-                return Response.ok(br).build();
-            }
-            else {
-                return Response.status(connection.getResponseCode()).build();
-            }
-        }
-        catch (Exception e){
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-        finally {
-            br.mark(0);
-            br.reset();
-        }
-    }
-
-    @GET
-    @Path("/{user}")
-    public Response getLocationOfBro(@PathParam("user") String user){
-        return null;
     }
 }

@@ -13,6 +13,8 @@ public class User {
     @Id
     private ObjectId id;
 
+    private String username;
+
     private String firstName;
 
     private String lastName;
@@ -24,14 +26,6 @@ public class User {
     private String token = "";
 
     private Boolean isGeolocalizable = false;
-
-    private List<User> bros;
-
-    @Embedded
-    private List<Brotherhood> brotherhoods;
-
-    @Embedded
-    private List<Geolocation> geolocations;
 
     /**
      * constructeur vide pour le dao
@@ -45,7 +39,8 @@ public class User {
      * @param email
      * @param password
      */
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String username, String firstName, String lastName, String email, String password) {
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -56,6 +51,9 @@ public class User {
         return id;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -73,19 +71,7 @@ public class User {
         return password;
     }
 
-    public List<User> getBros() {
-        return bros;
-    }
-
     public Boolean getIsGeolocalizable() {
         return isGeolocalizable;
-    }
-
-    public List<Geolocation> getGeolocations() {
-        return geolocations;
-    }
-
-    public List<Brotherhood> getBrotherhoods() {
-        return brotherhoods;
     }
 }

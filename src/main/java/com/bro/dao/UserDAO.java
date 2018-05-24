@@ -63,6 +63,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
 
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
+                .set("username",user.getUsername())
                 .set("firstName", user.getFirstName())
                 .set("lastName", user.getLastName())
                 .set("email", user.getEmail())
