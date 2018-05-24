@@ -13,7 +13,9 @@ import java.util.Optional;
 public class BromanceDAO  extends BasicDAO<Bromance, ObjectId> {
     public BromanceDAO(Class<Bromance> entityClass, Datastore ds) { super(entityClass, ds); }
 
+
     public Key<Bromance> save(User firstBro, User secondBro) {
+        //@TODO: verification que le sender n'est pas la liste des bloqués du receiver avant
         Bromance bromance = new Bromance(firstBro, secondBro);
         return super.save(bromance);
     }

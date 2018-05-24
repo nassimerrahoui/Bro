@@ -70,5 +70,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .set("password", user.getPassword());
         return update(query, ops);
     }
+
+    // @TODO: add and remove ennemy
 }
 
