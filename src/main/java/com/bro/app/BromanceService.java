@@ -69,23 +69,4 @@ public class BromanceService {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
-
-    @POST
-    @Path("/{bromance}/enemy")
-    public Response moveBitchGetOutTheWay(Bromance bromance){
-
-        Optional<Bromance> thisBromance = bromanceDAO.getBromance(bromance);
-
-        try {
-            if(thisBromance.isPresent()){
-
-                thisBromance.get().setBrolationship(Bromance.Brolationship.ENEMY);
-                return Response.ok(thisBromance.get().getBrolationship()).build();
-            }
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        catch (Exception e){
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-    }
 }

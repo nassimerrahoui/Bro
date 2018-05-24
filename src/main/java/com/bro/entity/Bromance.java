@@ -16,22 +16,21 @@ public class Bromance {
     public enum Brolationship {
         ACCEPTED,
         DENIED,
-        AWAITING,
-        ENEMY
+        AWAITING
     }
 
     @Reference
-    private User firstBro, secondBro;
+    private User sender, receiver;
 
     /**
      * constructeur vide pour le dao
      */
     public Bromance(){}
 
-    public Bromance(User firstBro, User secondBro){
+    public Bromance(User sender, User receiver){
         this.brolationship = Brolationship.AWAITING;
-        this.firstBro = firstBro;
-        this.secondBro = secondBro;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
     public ObjectId getId() {
@@ -46,11 +45,11 @@ public class Bromance {
         this.brolationship = brolationship;
     }
 
-    public User getFirstBro() {
-        return firstBro;
+    public User getSender() {
+        return sender;
     }
 
-    public User getSecondBro() {
-        return secondBro;
+    public User getReceiver() {
+        return receiver;
     }
 }
