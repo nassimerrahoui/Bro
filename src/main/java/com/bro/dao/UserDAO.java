@@ -3,11 +3,13 @@ package com.bro.dao;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import com.mongodb.WriteResult;
 import com.mongodb.client.result.UpdateResult;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
@@ -17,8 +19,8 @@ import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 
 public class UserDAO extends BasicDAO<User, ObjectId> {
-    public UserDAO(Class<User> entityClass, Datastore ds) {
-        super(entityClass, ds);
+    public UserDAO(Datastore ds) {
+        super( ds);
     }
 
     public Optional<User> getUser(String token){
@@ -26,6 +28,13 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .field("token").equal(token)
                 .asList().stream().findAny();
     }
+
+    public Boolean emailExists(String email){
+        return createQuery()
+                .field("email").equal(email)
+                .asList().stream().findAny().isPresent();
+    }
+
 
     public String authenticate(String email, String password){
         Query<User> query = createQuery().

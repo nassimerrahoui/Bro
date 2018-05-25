@@ -1,5 +1,6 @@
 package com.bro.entity;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
@@ -9,7 +10,6 @@ import java.util.List;
 
 @Entity("user")
 public class User {
-    // @TODO ajouter une liste de gens bloqués
     @Id
     private ObjectId id;
 
@@ -48,6 +48,12 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+
+    public void encrypt() {
+        this.password = DigestUtils.sha256Hex(password);
+    }
+
 
     public ObjectId getId() {
         return id;

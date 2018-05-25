@@ -2,6 +2,7 @@ package com.bro.app;
 
 import com.bro.dao.UserDAO;
 import com.bro.entity.User;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.mongodb.morphia.Key;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,16 +14,21 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserService {
 
-    private UserDAO userDAO = new UserDAO(User.class, new MorphiaService().getDatastore());
+    private UserDAO userDAO = new UserDAO(new MorphiaService().getDatastore());
 
     @POST
     @Path("/create")
-    public Response create(User user){
-
-        Key<User> key = userDAO.save(user);
-        if(key == null){
+    public Response create(User user) {
+        user.encrypt();
+        if (!EmailValidator.getInstance().isValid(user.getEmail())){
+            System.out.println("Format de l'email invalide");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+        if (userDAO.emailExists(user.getEmail())) {
+            System.out.println("L'email existe déjà");
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+        userDAO.save(user);
         return Response.status(Response.Status.CREATED).build();
     }
 
@@ -30,6 +36,7 @@ public class UserService {
     @Path("/auth")
     public Response auth(User user){
         try{
+            user.encrypt();
             String token = authenticate(user.getEmail(), user.getPassword());
             return Response.ok(token).build();
         }
