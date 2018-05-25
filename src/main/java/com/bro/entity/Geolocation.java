@@ -15,13 +15,9 @@ public class Geolocation {
     @Id
     private ObjectId id;
 
-    private String placeName;
-
     private double lat;
 
     private double lng;
-
-    private double accuracy;
 
     private User user;
 
@@ -34,19 +30,10 @@ public class Geolocation {
      * @param lat
      * @param lng
      */
-    public Geolocation(double lat, double lng, double accuracy, User user) {
+    public Geolocation(double lat, double lng, User user) {
         this.lat = lat;
         this.lng = lng;
-        this.accuracy = accuracy;
         this.user = user;
-    }
-
-    public String getPlaceName() {
-        return placeName;
-    }
-
-    public void setPlaceName(String placeName) {
-        this.placeName = placeName;
     }
 
     public double getLat() {
@@ -63,14 +50,6 @@ public class Geolocation {
 
     public void setLng(double lng) {
         this.lng = lng;
-    }
-
-    public double getAccuracy() {
-        return accuracy;
-    }
-
-    public void setAccuracy(double accuracy) {
-        this.accuracy = accuracy;
     }
 
     @Reference

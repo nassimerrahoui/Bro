@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 @Path("/geolocation")
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GeolocationService {
 
-    private GeolocationDAO geolocationDAO = new GeolocationDAO(Geolocation.class, new MorphiaService().getDatastore());
+    private GeolocationDAO geolocationDAO = new GeolocationDAO(new MorphiaService().getDatastore());
 
     @POST
     @Path("/create")
@@ -34,5 +35,17 @@ public class GeolocationService {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @GET
+    @Path("{token}/history")
+    public Response getLocationHistory(@PathParam("token") String token){
+
+        List<Geolocation> history = geolocationDAO.getLastLocation(token);
+
+        if(!history.isEmpty()) {
+            return Response.status(Response.Status.OK).entity(history).build();
+        }
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
