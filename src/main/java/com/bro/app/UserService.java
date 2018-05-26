@@ -3,7 +3,6 @@ package com.bro.app;
 import com.bro.dao.UserDAO;
 import com.bro.entity.User;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.mongodb.morphia.Key;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,20 +36,19 @@ public class UserService {
     public Response auth(User user){
         try{
             user.encrypt();
-            String token = authenticate(user.getEmail(), user.getPassword());
-            return Response.ok(token).build();
+            authenticate(user.getEmail(), user.getPassword());
+            return Response.ok(Response.Status.OK).entity(user.getToken()).build();
         }
         catch (Exception e){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
 
-    private String authenticate(String email, String password) throws Exception {
+    private void authenticate(String email, String password) throws Exception {
         String token = userDAO.authenticate(email, password);
         if(token.isEmpty()){
             throw new Exception("Authentication failed");
         }
-        return token;
     }
 
     @GET
@@ -69,18 +67,18 @@ public class UserService {
     }
 
     @POST
-    @Path("/{user}/logout")
-    public Response logout(@PathParam("user") String user) {
+    @Path("/{token}/logout")
+    public Response logout(@PathParam("token") String token) {
 
-        if(user != null){
-            userDAO.logout(user);
+        if(token != null){
+            userDAO.logout(token);
             return Response.status(Response.Status.RESET_CONTENT).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @PUT
-    @Path("/{user}")
+    @Path("/{token}/settings")
     public Response updateUser(User user){
 
         Boolean updated = userDAO.updateUser(user).getUpdatedCount() > 0;

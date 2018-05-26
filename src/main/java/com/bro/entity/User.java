@@ -34,8 +34,8 @@ public class User {
      */
     public User(){}
 
-
     /**
+     * @param username
      * @param firstName
      * @param lastName
      * @param email
@@ -77,6 +77,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public Boolean getIsGeolocalizable() {

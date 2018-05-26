@@ -3,16 +3,9 @@ package com.bro.dao;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
-
-import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
-import com.mongodb.WriteResult;
-import com.mongodb.client.result.UpdateResult;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
@@ -54,25 +47,24 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return "";
     }
 
-    public UpdateResults logout(String user){
+    public void logout(String token){
         Query<User> query = createQuery().
-                field("_id").equal(user);
+                field("token").equal(token);
 
-        String token = "";
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .set("token", token);
-        return update(query, ops);
+                .set("token", "");
+        update(query, ops);
     }
 
     public UpdateResults updateUser(User user){
 
         Query<User> query = createQuery()
-                .field("_id").equal(user.getId());
+                .field("token").equal(user.getToken());
 
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .set("username",user.getUsername())
+                .set("username", user.getUsername())
                 .set("firstName", user.getFirstName())
                 .set("lastName", user.getLastName())
                 .set("email", user.getEmail())
