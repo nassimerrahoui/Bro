@@ -1,7 +1,9 @@
 package com.bro.app;
 
 import com.bro.dao.BrotherhoodDAO;
+import com.bro.dao.UserDAO;
 import com.bro.entity.Brotherhood;
+import com.bro.entity.User;
 import org.mongodb.morphia.Key;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,12 +15,13 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BrotherhoodService {
 
-    private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(Brotherhood.class, new MorphiaService().getDatastore());
+    private MorphiaService morphiaService = new MorphiaService();
+    private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(morphiaService.getDatastore());
+    private UserDAO userDAO = new UserDAO(morphiaService.getDatastore());
 
     @POST
     @Path("/create")
     public Response create(Brotherhood brotherhood){
-
         Key<Brotherhood> key = brotherhoodDAO.save(brotherhood);
         if(key == null){
             return Response.status(Response.Status.BAD_REQUEST).build();

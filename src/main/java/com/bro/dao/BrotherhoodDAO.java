@@ -1,10 +1,12 @@
 package com.bro.dao;
 
+import com.bro.entity.Bromance;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import com.mongodb.WriteResult;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
@@ -17,8 +19,8 @@ import java.util.Optional;
 
 public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
 
-    public BrotherhoodDAO(Class<Brotherhood> entityClass, Datastore ds) {
-        super(entityClass, ds);
+    public BrotherhoodDAO(Datastore ds) {
+        super(ds);
     }
 
     /**

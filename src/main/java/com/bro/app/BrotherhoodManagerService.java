@@ -4,10 +4,7 @@ import com.bro.dao.BrotherhoodManagerDAO;
 import com.bro.entity.BrotherhoodManager;
 import org.mongodb.morphia.Key;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -17,10 +14,10 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BrotherhoodManagerService {
 
-    private BrotherhoodManagerDAO BrotherhoodManagerDAO = new BrotherhoodManagerDAO(BrotherhoodManager.class, new MorphiaService().getDatastore());
+    private BrotherhoodManagerDAO BrotherhoodManagerDAO = new BrotherhoodManagerDAO(new MorphiaService().getDatastore());
 
     @POST
-    @Path("/{Brother}/create")
+    @Path("/create")
     public Response create(BrotherhoodManager BrotherhoodManager){
 
         Key<BrotherhoodManager> key = BrotherhoodManagerDAO.save(BrotherhoodManager);
@@ -29,6 +26,7 @@ public class BrotherhoodManagerService {
         }
         return Response.status(Response.Status.CREATED).build();
     }
+
     // @TODO brotherhoodmanager: récupérer la liste de tous les groupes d'un utilisateur
     // @TODO brotherhoodmanager: faire un accept/denied/awaiting/...
 }

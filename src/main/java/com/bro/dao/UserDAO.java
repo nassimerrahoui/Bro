@@ -22,6 +22,12 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .asList().stream().findAny();
     }
 
+    public Optional<User> getUserByEmail(String email){
+        return createQuery()
+                .field("email").equal(email)
+                .asList().stream().findAny();
+    }
+
     public Boolean emailExists(String email){
         return createQuery()
                 .field("email").equal(email)

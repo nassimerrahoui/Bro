@@ -20,6 +20,7 @@ public class BroApp extends Application {
 		sets.add(new UserService());
 		sets.add(new GeolocationService());
 		sets.add(new BrotherhoodService());
+		sets.add(new BrotherhoodManagerService());
 		return sets;
 	}
 

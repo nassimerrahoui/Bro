@@ -29,14 +29,20 @@ public class Brotherhood {
     public Brotherhood(){}
 
     /**
+     *
      * @param name
-     * @param leader
+     * @param beginning
+     * @param end
      */
-    public Brotherhood(String name, User leader, Date beginning, Date end){
+    public Brotherhood(String name, Date beginning, Date end, User leader){
         this.name = name;
-        this.leader = leader;
         this.beginning = beginning;
         this.end = end;
+        this.leader = leader;
+    }
+
+    public void setUser(User user){
+        this.leader = leader;
     }
 
     public ObjectId getId() {

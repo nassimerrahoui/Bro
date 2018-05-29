@@ -16,7 +16,7 @@ import java.util.Optional;
 public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
     public GeolocationDAO(Datastore ds) {
-        super(Geolocation.class, ds);
+        super(ds);
     }
 
     public List<Geolocation> getLastLocation(String token){

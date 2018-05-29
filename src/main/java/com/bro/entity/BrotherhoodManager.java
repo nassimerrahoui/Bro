@@ -16,7 +16,7 @@ public class BrotherhoodManager {
     private User user;
 
     @Reference
-    private Brotherhood group;
+    private Brotherhood brotherhood;
 
     private Boolean isGeolocalizable = false;
 
@@ -28,10 +28,26 @@ public class BrotherhoodManager {
     /**
      * Associates a user to a group with rights
      * @param user a user
-     * @param group a brotherhood
+     * @param brotherhood a brotherhood
      */
-    public BrotherhoodManager(User user, Brotherhood group) {
+    public BrotherhoodManager(User user, Brotherhood brotherhood) {
         this.user = user;
-        this.group = group;
+        this.brotherhood = brotherhood;
+    }
+
+    public void activateGeolocalisation(){
+        this.isGeolocalizable= true;
+    }
+
+    public User getUser(){
+        return this.user;
+    }
+
+    public Brotherhood getBrotherhood(){
+        return this.brotherhood;
+    }
+
+    public Boolean isGeolocalizable(){
+        return this.isGeolocalizable;
     }
 }
