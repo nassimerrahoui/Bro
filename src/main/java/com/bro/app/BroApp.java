@@ -1,8 +1,5 @@
 package com.bro.app;
 
-import com.bro.entity.Bromance;
-import com.bro.entity.Geolocation;
-import com.bro.entity.User;
 import com.bro.exception.RuntimeExceptionMapper;
 import com.bro.filter.GsonProvider;
 import javax.ws.rs.ApplicationPath;
@@ -20,7 +17,6 @@ public class BroApp extends Application {
 		sets.add(new UserService());
 		sets.add(new GeolocationService());
 		sets.add(new BrotherhoodService());
-		sets.add(new BrotherhoodManagerService());
 		return sets;
 	}
 

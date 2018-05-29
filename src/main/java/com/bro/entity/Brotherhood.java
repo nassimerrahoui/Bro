@@ -1,63 +1,55 @@
 package com.bro.entity;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
-import java.util.Date;
-import java.util.HashMap;
-
-
+@Entity("brotherhood")
 public class Brotherhood {
 
     @Id
     private ObjectId id;
 
-    private String name;
+    private Brolationship brolationship;
+
+    public enum Brolationship {
+        ACCEPTED,
+        DENIED,
+        AWAITING
+    }
 
     @Reference
-    private User leader;
-
-    private Date beginning;
-
-    private Date end;
+    private User sender, receiver;
 
     /**
      * constructeur vide pour le dao
      */
     public Brotherhood(){}
 
-    /**
-     *
-     * @param name
-     * @param beginning
-     * @param end
-     */
-    public Brotherhood(String name, Date beginning, Date end, User leader){
-        this.name = name;
-        this.beginning = beginning;
-        this.end = end;
-        this.leader = leader;
-    }
-
-    public void setUser(User user){
-        this.leader = leader;
+    public Brotherhood(User sender, User receiver){
+        this.brolationship = Brolationship.AWAITING;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
     public ObjectId getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public Brolationship getBrolationship() {
+        return brolationship;
     }
 
-    public User getLeader() {
-        return leader;
+    public void setBrolationship(Brolationship brolationship) {
+        this.brolationship = brolationship;
     }
 
-    public Date getBeginning() { return this.beginning; }
+    public User getSender() {
+        return sender;
+    }
 
-    public Date getEnd() { return this.end;}
+    public User getReceiver() {
+        return receiver;
+    }
 }

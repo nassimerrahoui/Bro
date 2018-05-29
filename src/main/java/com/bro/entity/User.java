@@ -2,7 +2,6 @@ package com.bro.entity;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
@@ -25,7 +24,7 @@ public class User {
 
     private String token = "";
 
-    private Boolean isGeolocalizable = false;
+    private Boolean location = false;
 
     private List<User> enemies;
 
@@ -83,8 +82,8 @@ public class User {
         return token;
     }
 
-    public Boolean getIsGeolocalizable() {
-        return isGeolocalizable;
+    public Boolean getLocation() {
+        return location;
     }
 
     public List<User> getEnemies() { return enemies; }
