@@ -24,7 +24,7 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GeolocationService {
 
-    private GeolocationDAO geolocationDAO = new GeolocationDAO(new MorphiaService().getDatastore());
+    private GeolocationDAO geolocationDAO = new GeolocationDAO(BroApp.getDatastore());
 
     @POST
     @Path("/create")

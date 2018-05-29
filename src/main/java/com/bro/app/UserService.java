@@ -14,7 +14,7 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserService {
 
-    private UserDAO userDAO = new UserDAO(new MorphiaService().getDatastore());
+    private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
     /** Creation du compte dans l'application **/
     @POST

@@ -2,12 +2,12 @@ package com.bro.entity;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.*;
 
 import java.util.List;
 
 @Entity("user")
+@Indexes(@Index(fields = {@Field("username"), @Field("email")}, options = @IndexOptions(unique = true)))
 public class User {
     @Id
     private ObjectId id;

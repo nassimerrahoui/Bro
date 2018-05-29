@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Optional;
 
 @Path("/brotherhood")
@@ -18,13 +19,16 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BrotherhoodService {
 
-    private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(new MorphiaService().getDatastore());
+    private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
 
     @POST
     @Path("/create")
-    public Response create(User sender, User receiver){
+    public Response create(List<User> users){
 
-        Key<Brotherhood> key = brotherhoodDAO.save(sender, receiver);
+        User sender = users.get(0);
+        User receiver = users.get(1);
+
+        Key<Brotherhood> key = brotherhoodDAO.create(sender, receiver);
 
         if(key == null){
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -33,10 +37,10 @@ public class BrotherhoodService {
     }
 
     @POST
-    @Path("/{brotherhood}/accept")
-    public Response giveHimFive(Brotherhood brotherhood){
+    @Path("/accept")
+    public Response giveHimFive(Brotherhood brotherhood, String token){
 
-        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood);
+        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
 
         try {
             if(thisBrotherhood.isPresent()){
@@ -52,10 +56,10 @@ public class BrotherhoodService {
     }
 
     @POST
-    @Path("/{brotherhood}/deny")
-    public Response shutDown(Brotherhood brotherhood){
+    @Path("/deny")
+    public Response shutDown(Brotherhood brotherhood, String token){
 
-        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood);
+        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
 
         try {
             if(thisBrotherhood.isPresent()){

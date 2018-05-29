@@ -77,9 +77,10 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         Query<User> query = createQuery().
                 field("token").equal(token);
 
+        String empty = "";
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .set("token", "");
+                .set("token", empty);
         update(query, ops);
     }
 
