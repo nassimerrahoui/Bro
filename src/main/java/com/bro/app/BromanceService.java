@@ -18,13 +18,13 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BromanceService {
 
-    private BromanceDAO bromanceDAO = new BromanceDAO(Bromance.class, new MorphiaService().getDatastore());
+    private BromanceDAO bromanceDAO = new BromanceDAO(new MorphiaService().getDatastore());
 
     @POST
     @Path("/create")
-    public Response create(User firstBro, User secondBro){
+    public Response create(User sender, User receiver){
 
-        Key<Bromance> key = bromanceDAO.save(firstBro, secondBro);
+        Key<Bromance> key = bromanceDAO.save(sender, receiver);
 
         if(key == null){
             return Response.status(Response.Status.BAD_REQUEST).build();

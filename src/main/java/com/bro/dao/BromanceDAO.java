@@ -7,17 +7,25 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 
+import javax.management.Query;
 import java.util.Optional;
 
 
 public class BromanceDAO  extends BasicDAO<Bromance, ObjectId> {
-    public BromanceDAO(Class<Bromance> entityClass, Datastore ds) { super(entityClass, ds); }
 
+    public BromanceDAO(Datastore ds) { super(ds); }
 
-    public Key<Bromance> save(User firstBro, User secondBro) {
-        //@TODO: verification que le sender n'est pas la liste des bloqués du receiver avant
-        Bromance bromance = new Bromance(firstBro, secondBro);
-        return super.save(bromance);
+    public Key<Bromance> save(User sender, User receiver) {
+
+        Optional<User> R = getDatastore().createQuery(User.class)
+                .field("token").equal(receiver.getToken())
+                .asList().stream().findAny();
+
+        if(R.isPresent() && !R.get().getEnemies().contains(sender)){
+            Bromance bromance = new Bromance(sender, receiver);
+            return super.save(bromance);
+        }
+        return null;
     }
 
     public Optional<Bromance> getBromance(Bromance bromance) {
