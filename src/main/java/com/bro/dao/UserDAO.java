@@ -3,6 +3,8 @@ package com.bro.dao;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import com.bro.entity.Bromance;
 import com.bro.entity.User;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
@@ -12,16 +14,20 @@ import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 
 public class UserDAO extends BasicDAO<User, ObjectId> {
+
+    /** Constructeur **/
     public UserDAO(Datastore ds) {
         super( ds);
     }
 
+    /** Récupération de l'utilisateur à partir de son token **/
     public Optional<User> getUser(String token){
         return createQuery()
                 .field("token").equal(token)
                 .asList().stream().findAny();
     }
 
+    /** Regex pour l'email **/
     public Boolean emailExists(String email){
         return createQuery()
                 .field("email").equal(email)
@@ -29,6 +35,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
 
+    /** Connexion avec email et password **/
     public String authenticate(String email, String password){
         Query<User> query = createQuery().
                 field("email").equal(email).
@@ -47,6 +54,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return "";
     }
 
+    /** Déconnexion et suppression du token **/
     public void logout(String token){
         Query<User> query = createQuery().
                 field("token").equal(token);
@@ -57,6 +65,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         update(query, ops);
     }
 
+    /** Mise à jours des informations du bro : username, firstName, lastName, email, password **/
     public UpdateResults updateUser(User user){
 
         Query<User> query = createQuery()
@@ -72,6 +81,33 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return update(query, ops);
     }
 
-    // @TODO: add and remove ennemy
+    /** Ajout enemy dans la liste enemies et suppression de la bromance **/
+    public void addEnemy(User user, User enemy){
+
+        Query<User> query = createQuery()
+                .field("token").equal(user.getToken());
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .push("enemies", enemy);
+        update(query, ops);
+
+
+        Query<Bromance> bromance = getDatastore().createQuery(Bromance.class)
+                .field("sender").equal(user)
+                .field("receiver").equal(enemy);
+        getDatastore().delete(bromance);
+    }
+
+    /** Suppression du bro dans la liste enemies **/
+    public void deleteEnemy(User user, User bro){
+
+        Query<User> query = createQuery()
+                .field("token").equal(user.getToken());
+
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .removeAll("enemies", bro);
+        update(query, ops);
+    }
 }
 

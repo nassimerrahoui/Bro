@@ -27,7 +27,7 @@ public class User {
 
     private Boolean isGeolocalizable = false;
 
-    private List<User> ennemies;
+    private List<User> enemies;
 
     /**
      * constructeur vide pour le dao
@@ -87,5 +87,5 @@ public class User {
         return isGeolocalizable;
     }
 
-    public List<User> getEnnemies() { return ennemies; }
+    public List<User> getEnemies() { return enemies; }
 }
