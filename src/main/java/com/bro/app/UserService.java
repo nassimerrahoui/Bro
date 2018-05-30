@@ -2,6 +2,8 @@ package com.bro.app;
 
 import com.bro.dao.UserDAO;
 import com.bro.entity.User;
+import com.google.gson.JsonObject;
+import com.mongodb.util.JSON;
 import org.apache.commons.validator.routines.EmailValidator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -44,7 +46,9 @@ public class UserService {
         try{
             user.encrypt();
             String token = authenticate(user.getEmail(), user.getPassword());
-            return Response.ok(token).build();
+            JsonObject tokenJSON = new JsonObject();
+            tokenJSON.addProperty("token",token);
+            return Response.status(Response.Status.OK).entity(tokenJSON).build();
         }
         catch (Exception e){
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -65,7 +69,9 @@ public class UserService {
         Optional<User> user = userDAO.getUser(token);
         try {
             if(user.isPresent()){
-                return Response.ok(token).build();
+                JsonObject tokenJSON = new JsonObject();
+                tokenJSON.addProperty("token",token);
+                return Response.status(Response.Status.OK).entity(tokenJSON).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
