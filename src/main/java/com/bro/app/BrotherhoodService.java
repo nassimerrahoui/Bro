@@ -4,6 +4,7 @@ import com.bro.dao.BrotherhoodDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.UpdateResults;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,6 +19,7 @@ public class BrotherhoodService {
 
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
 
+    /** Demande d'une brotherhood **/
     @POST
     @Path("/create")
     public Response create(List<User> users){
@@ -33,18 +35,18 @@ public class BrotherhoodService {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    // TODO : Faire la fontion deny dans le DAO
+    /** Accepte une brotherhood **/
     @POST
-    @Path("/{token}/accept")
-    public Response giveHimFive(Brotherhood brotherhood, @PathParam("token") String token){
+    @Path("/{token}/{id}/accept")
+    public Response accept(@PathParam("token") String token, @PathParam("id") String id){
 
-        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
+        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(token, id);
 
         try {
-            if(thisBrotherhood.isPresent()){
+            if(thisBrotherhood != null){
 
-                thisBrotherhood.get().setBrolationship(Brotherhood.Brolationship.ACCEPTED);
-                return Response.status(Response.Status.OK).entity(thisBrotherhood.get().getBrolationship()).build();
+                UpdateResults results = brotherhoodDAO.accept(thisBrotherhood);
+                return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -53,18 +55,18 @@ public class BrotherhoodService {
         }
     }
 
-    // TODO : Faire la fontion deny dans le DAO
+    /** Décline une brotherhood **/
     @POST
-    @Path("/{token}/deny")
-    public Response shutDown(Brotherhood brotherhood, @PathParam("token") String token){
+    @Path("/{token}/{id}/deny")
+    public Response shutDown(@PathParam("token") String token, @PathParam("id") String id){
 
-        Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
+        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(token, id);
 
         try {
-            if(thisBrotherhood.isPresent()){
+            if(thisBrotherhood != null){
 
-                thisBrotherhood.get().setBrolationship(Brotherhood.Brolationship.DENIED);
-                return Response.status(Response.Status.OK).entity(thisBrotherhood.get().getBrolationship()).build();
+                UpdateResults results = brotherhoodDAO.deny(thisBrotherhood);
+                return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -73,12 +75,12 @@ public class BrotherhoodService {
         }
     }
 
+    /** Retourne la liste des brotherhood**/
     @GET
     @Path("/{token}/bros")
     public Response findBros(@PathParam("token") String token){
 
         List<Brotherhood> bros = brotherhoodDAO.getBrotherhoods(token);
-        System.out.println(bros);
 
         try{
             if(!bros.isEmpty()){
