@@ -33,6 +33,7 @@ public class BrotherhoodService {
         return Response.status(Response.Status.CREATED).build();
     }
 
+    // TODO : Faire la fontion deny dans le DAO
     @POST
     @Path("/{token}/accept")
     public Response giveHimFive(Brotherhood brotherhood, @PathParam("token") String token){
@@ -52,6 +53,7 @@ public class BrotherhoodService {
         }
     }
 
+    // TODO : Faire la fontion deny dans le DAO
     @POST
     @Path("/{token}/deny")
     public Response shutDown(Brotherhood brotherhood, @PathParam("token") String token){
@@ -76,6 +78,7 @@ public class BrotherhoodService {
     public Response findBros(@PathParam("token") String token){
 
         List<Brotherhood> bros = brotherhoodDAO.getBrotherhoods(token);
+        System.out.println(bros);
 
         try{
             if(!bros.isEmpty()){
