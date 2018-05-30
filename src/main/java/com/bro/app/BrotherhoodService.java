@@ -5,10 +5,7 @@ import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import org.mongodb.morphia.Key;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -37,8 +34,8 @@ public class BrotherhoodService {
     }
 
     @POST
-    @Path("/accept")
-    public Response giveHimFive(Brotherhood brotherhood, String token){
+    @Path("/{token}/accept")
+    public Response giveHimFive(Brotherhood brotherhood, @PathParam("token") String token){
 
         Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
 
@@ -46,7 +43,7 @@ public class BrotherhoodService {
             if(thisBrotherhood.isPresent()){
 
                 thisBrotherhood.get().setBrolationship(Brotherhood.Brolationship.ACCEPTED);
-                return Response.ok(thisBrotherhood.get().getBrolationship()).build();
+                return Response.status(Response.Status.OK).entity(thisBrotherhood.get().getBrolationship()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -56,8 +53,8 @@ public class BrotherhoodService {
     }
 
     @POST
-    @Path("/deny")
-    public Response shutDown(Brotherhood brotherhood, String token){
+    @Path("/{token}/deny")
+    public Response shutDown(Brotherhood brotherhood, @PathParam("token") String token){
 
         Optional<Brotherhood> thisBrotherhood = brotherhoodDAO.getBrotherhood(brotherhood, token);
 
@@ -65,7 +62,25 @@ public class BrotherhoodService {
             if(thisBrotherhood.isPresent()){
 
                 thisBrotherhood.get().setBrolationship(Brotherhood.Brolationship.DENIED);
-                return Response.ok(thisBrotherhood.get().getBrolationship()).build();
+                return Response.status(Response.Status.OK).entity(thisBrotherhood.get().getBrolationship()).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        catch (Exception e){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+    }
+
+    @GET
+    @Path("/{token}/bros")
+    public Response findBros(@PathParam("token") String token){
+
+        List<Brotherhood> bros = brotherhoodDAO.getBrotherhoods(token);
+
+        try{
+            if(!bros.isEmpty()){
+
+                return Response.status(Response.Status.OK).entity(bros).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

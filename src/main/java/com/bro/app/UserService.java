@@ -43,18 +43,19 @@ public class UserService {
     public Response auth(User user){
         try{
             user.encrypt();
-            authenticate(user.getEmail(), user.getPassword());
-            return Response.ok(Response.Status.OK).entity(user.getToken()).build();
+            String token = authenticate(user.getEmail(), user.getPassword());
+            return Response.ok(token).build();
         }
         catch (Exception e){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
-    private void authenticate(String email, String password) throws Exception {
+    private String authenticate(String email, String password) throws Exception {
         String token = userDAO.authenticate(email, password);
         if(token.isEmpty()){
             throw new Exception("Authentication failed");
         }
+        return token;
     }
 
     /** Connexion persistante **/
@@ -64,7 +65,7 @@ public class UserService {
         Optional<User> user = userDAO.getUser(token);
         try {
             if(user.isPresent()){
-                return Response.ok(Response.Status.OK).build();
+                return Response.ok(token).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
