@@ -106,6 +106,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return update(query, ops);
     }
 
+    // TODO : chercher l'enemie avec son username
     /**
      * Ajout enemy dans la liste enemies et suppression de la bromance
      **/
@@ -123,6 +124,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         getDatastore().delete(bromance);
     }
 
+    // TODO : chercher le bro avec son username
     /**
      * Suppression du bro dans la liste enemies
      **/
