@@ -3,7 +3,6 @@ package com.bro.app;
 import com.bro.dao.UserDAO;
 import com.bro.entity.User;
 import com.google.gson.JsonObject;
-import com.mongodb.util.JSON;
 import org.apache.commons.validator.routines.EmailValidator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -82,7 +81,7 @@ public class UserService {
 
     /** Déconnexion **/
     @POST
-    @Path("{token}/logout")
+    @Path("/{token}/logout")
     public Response logout(@PathParam("token") String token) {
         System.out.println(token);
         if(token != null){
@@ -92,6 +91,7 @@ public class UserService {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
+    // TODO : A TESTER
     /** Mettre à jours les informations de ton compte **/
     @PUT
     @Path("/settings")
@@ -105,6 +105,7 @@ public class UserService {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
+    // TODO : A TESTER
     /** Liste des bro devenu des enemies**/
     @GET
     @Path("/{token}/enemies")
@@ -122,9 +123,10 @@ public class UserService {
     }
 
 
+    // TODO : A TESTER
     /** Bloquer un ennemi **/
     @POST
-    @Path("{token}/enemies/add")
+    @Path("/{token}/enemies/add")
     public Response addEnemy(@PathParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
@@ -134,10 +136,10 @@ public class UserService {
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-
+    // TODO : A TESTER
     /** Débloquer un bro **/
     @POST
-    @Path("{token}/enemies/delete")
+    @Path("/{token}/enemies/delete")
     public Response deleteEnemy(@PathParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {

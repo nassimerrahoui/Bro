@@ -18,7 +18,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         super(ds);
     }
 
-
+    /** Sauvegarder une position en base **/
     public Key<Geolocation> create(Geolocation geo) {
         Optional<User> user = getDatastore().createQuery(User.class)
                 .field("username").equal(geo.getUser().getUsername())
@@ -31,6 +31,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         return null;
     }
 
+    /** Retourne les 100 dernières positions d'un user **/
     public List<Geolocation> getLastLocation(String token){
 
         return createQuery()
@@ -38,6 +39,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .asList(new FindOptions().limit(100));
     }
 
+    /** Retourne la distance entre deux user **/
     public double getDistance(String username, String username2){
         System.out.println("try");
         Optional<User> userQuery = getDatastore().createQuery(User.class)

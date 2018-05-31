@@ -9,7 +9,6 @@ import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,7 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
 
     public BrotherhoodDAO(Datastore ds) { super(ds); }
 
-    /** Demande d'une brotherhood **/
+    /** Crée une brotherhood si elle n'existe pas **/
     public Key<Brotherhood> create(User sender, User receiver) {
 
         Optional<User> S = getDatastore().createQuery(User.class)

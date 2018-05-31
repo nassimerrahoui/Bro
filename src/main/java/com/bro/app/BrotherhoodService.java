@@ -5,12 +5,11 @@ import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
+
 
 @Path("/brotherhood")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,6 +34,7 @@ public class BrotherhoodService {
         return Response.status(Response.Status.CREATED).build();
     }
 
+    // TODO : A TESTER (ID)
     /** Accepte une brotherhood **/
     @POST
     @Path("/{token}/{id}/accept")
@@ -55,6 +55,7 @@ public class BrotherhoodService {
         }
     }
 
+    // TODO : A TESTER (ID)
     /** Décline une brotherhood **/
     @POST
     @Path("/{token}/{id}/deny")
@@ -78,7 +79,7 @@ public class BrotherhoodService {
     /** Retourne la liste des brotherhood**/
     @GET
     @Path("/{token}/bros")
-    public Response findBros(@PathParam("token") String token){
+    public Response getBros(@PathParam("token") String token){
 
         List<User> bros = brotherhoodDAO.getBrotherhoods(token);
 

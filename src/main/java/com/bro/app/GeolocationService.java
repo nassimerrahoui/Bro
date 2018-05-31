@@ -6,7 +6,6 @@ import com.bro.entity.Geolocation;
 import com.bro.entity.User;
 import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,9 +27,10 @@ public class GeolocationService {
         }
         return Response.status(Response.Status.CREATED).build();
     }
-    
+
+    // TODO : A TESTER
     @GET
-    @Path("{token}/history")
+    @Path("/{token}/history")
     public Response getLocationHistory(@PathParam("token") String token){
 
         List<Geolocation> history = geolocationDAO.getLastLocation(token);
@@ -43,7 +43,7 @@ public class GeolocationService {
 
 
     @GET
-    @Path("distance")
+    @Path("/distance")
     public Response getDistance(User bro1, User bro2){
 
         double distance = geolocationDAO.getDistance(bro1.getUsername(), bro2.getUsername());
@@ -58,8 +58,4 @@ public class GeolocationService {
         }
 
     }
-
-
-
-
 }
