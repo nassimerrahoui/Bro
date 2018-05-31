@@ -4,12 +4,13 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 
+/** Morphia est un ORM permettant de mapper les classes sous formes d'entités **/
 public class MorphiaService {
 
     private Morphia morphia;
     private Datastore datastore;
 
-    public MorphiaService(){
+    MorphiaService(){
 
         // MongoClient pour se connecter sur le localhost
         // Lancer MongoDB avant de run l'application
@@ -31,7 +32,7 @@ public class MorphiaService {
         this.morphia = morphia;
     }
 
-    public Datastore getDatastore() {
+    Datastore getDatastore() {
         return datastore;
     }
 

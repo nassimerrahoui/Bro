@@ -3,9 +3,9 @@ package com.bro.entity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
-
 import java.util.List;
 
+/** Représente un bro **/
 @Entity("user")
 @Indexes(@Index(fields = {@Field("username"), @Field("email")}, options = @IndexOptions(unique = true)))
 public class User {
@@ -24,7 +24,7 @@ public class User {
 
     private String token = "";
 
-    private Boolean location = false;
+    private Boolean isLocation = false;
 
     private List<User> enemies;
 
@@ -82,8 +82,8 @@ public class User {
         return token;
     }
 
-    public Boolean getLocation() {
-        return location;
+    public Boolean getIsLocation() {
+        return isLocation;
     }
 
     public List<User> getEnemies() { return enemies; }

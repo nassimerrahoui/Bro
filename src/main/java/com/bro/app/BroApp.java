@@ -9,6 +9,7 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
+/** Gestion des services, providers et exceptions **/
 @ApplicationPath("")
 public class BroApp extends Application {
 
@@ -38,3 +39,4 @@ public class BroApp extends Application {
 	    return datastore;
     }
 }
+

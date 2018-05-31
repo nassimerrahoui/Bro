@@ -6,6 +6,7 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
+/** Représente une relation entre deux bros **/
 @Entity("brotherhood")
 public class Brotherhood {
 

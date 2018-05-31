@@ -1,17 +1,14 @@
 package com.bro.entity;
 
-
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
-
-
 import java.util.Date;
 import java.util.Objects;
-import java.util.zip.DataFormatException;
 
-/** Latitude et doubleitude quelque part sur Terre, où se trouve ton/ta bro avec une précision variable. */
+
+/** Représente un position d'un bro quelque part sur Terre **/
 @Entity("geolocation")
 public class Geolocation {
 
