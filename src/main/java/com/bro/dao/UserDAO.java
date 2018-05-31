@@ -18,6 +18,12 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         super(ds);
     }
 
+    public static Optional<User> getUserById(String userID) {
+        return createQuery()
+                .field("_id").equal(userID)
+                .asList().stream().findAny();
+    }
+
     /**
      * Constructeur
      *

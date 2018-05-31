@@ -1,12 +1,10 @@
 package com.bro.entity;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
 import java.util.Date;
-import java.util.HashMap;
 
 
 public class Brotherhood {
