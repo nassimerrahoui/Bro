@@ -1,3 +1,59 @@
-]0;firejail /usr/bin/meld ./src/main/java/com/bro/entity/Brotherhood_LOCAL_7053.java ./src/main/java/com/bro/entity/Brotherhood_BASE_7053.java ./src/main/java/com/bro/entity/Brotherhood_REMOTE_7053.java Parent pid 7172, child pid 7174
+package com.bro.entity;
 
-Parent is shutting down, bye...
+import org.bson.types.ObjectId;
+
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
+
+@Entity("brotherhood")
+public class Brotherhood {
+
+    @Id
+    private ObjectId id;
+
+    private Brolationship brolationship;
+
+    public enum Brolationship {
+        ACCEPTED,
+        DENIED,
+        AWAITING
+    }
+
+    @Reference
+    private User sender;
+
+    @Reference
+    private User receiver;
+
+    /**
+     * constructeur vide pour le dao
+     */
+    public Brotherhood(){}
+
+    public Brotherhood(User sender, User receiver){
+        this.brolationship = Brolationship.AWAITING;
+        this.sender = sender;
+        this.receiver = receiver;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public Brolationship getBrolationship() {
+        return brolationship;
+    }
+
+    public void setBrolationship(Brolationship brolationship) {
+        this.brolationship = brolationship;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public User getReceiver() {
+        return receiver;
+    }
+}
