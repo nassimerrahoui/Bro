@@ -4,7 +4,7 @@ package com.bro.dao;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.bro.entity.Bromance;
+import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
@@ -83,9 +83,10 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         Query<User> query = createQuery().
                 field("token").equal(token);
 
+        String empty = "";
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .set("token", "");
+                .set("token", empty);
         update(query, ops);
     }
 
@@ -111,6 +112,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return update(query, ops);
     }
 
+    // TODO : chercher l'enemie avec son username
     /**
      * Ajout enemy dans la liste enemies et suppression de la bromance
      **/
@@ -122,12 +124,13 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .createUpdateOperations(User.class)
                 .push("enemies", enemy);
         update(query, ops);
-        Query<Bromance> bromance = getDatastore().createQuery(Bromance.class)
+        Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
                 .field("sender").equal(user)
                 .field("receiver").equal(enemy);
         getDatastore().delete(bromance);
     }
 
+    // TODO : chercher le bro avec son username
     /**
      * Suppression du bro dans la liste enemies
      **/
