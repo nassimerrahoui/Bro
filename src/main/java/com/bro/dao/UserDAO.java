@@ -112,32 +112,35 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return update(query, ops);
     }
 
-    // TODO : chercher l'enemie avec son username
     /**
      * Ajout enemy dans la liste enemies et suppression de la bromance
      **/
-    public void addEnemy(User user, User enemy) {
+    public void addEnemy(User user, User username) {
 
         Query<User> query = createQuery()
                 .field("token").equal(user.getToken());
+        User enemy = createQuery()
+                .field("username").equal(username.getUsername()).get();
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
                 .push("enemies", enemy);
         update(query, ops);
+
         Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
                 .field("sender").equal(user)
                 .field("receiver").equal(enemy);
         getDatastore().delete(bromance);
     }
 
-    // TODO : chercher le bro avec son username
     /**
      * Suppression du bro dans la liste enemies
      **/
-    public void deleteEnemy(User user, User bro) {
+    public void deleteEnemy(User user, User username) {
 
         Query<User> query = createQuery()
                 .field("token").equal(user.getToken());
+        User bro = createQuery()
+                .field("username").equal(username.getUsername()).get();
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
                 .removeAll("enemies", bro);

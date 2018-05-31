@@ -125,10 +125,10 @@ public class UserService {
     /** Bloquer un ennemi **/
     @POST
     @Path("{token}/enemies/add")
-    public Response addEnemy(@PathParam("token") String token, User enemy) {
+    public Response addEnemy(@PathParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
-            userDAO.addEnemy(user.get(), enemy);
+            userDAO.addEnemy(user.get(), username);
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
@@ -138,10 +138,10 @@ public class UserService {
     /** Débloquer un bro **/
     @POST
     @Path("{token}/enemies/delete")
-    public Response deleteEnemy(@PathParam("token") String token, User bro) {
+    public Response deleteEnemy(@PathParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
-            userDAO.deleteEnemy(user.get(), bro);
+            userDAO.deleteEnemy(user.get(), username);
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
