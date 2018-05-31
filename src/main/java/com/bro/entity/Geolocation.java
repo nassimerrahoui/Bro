@@ -8,7 +8,7 @@ import org.mongodb.morphia.annotations.*;
 import javax.xml.ws.RequestWrapper;
 import java.util.Objects;
 
-/** Latitude et Longitude quelque part sur Terre, où se trouve ton/ta bro avec une précision variable. */
+/** Latitude et doubleitude quelque part sur Terre, où se trouve ton/ta bro avec une précision variable. */
 @Entity("geolocation")
 public class Geolocation {
 
@@ -19,6 +19,7 @@ public class Geolocation {
 
     private double lng;
 
+    @Reference
     private User user;
 
     /**

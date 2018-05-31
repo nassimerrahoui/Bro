@@ -3,21 +3,13 @@ package com.bro.app;
 
 import com.bro.dao.GeolocationDAO;
 import com.bro.entity.Geolocation;
-import com.bro.entity.User;
-import com.google.gson.Gson;
-import org.bson.types.ObjectId;
+import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 
 @Path("/geolocation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +21,7 @@ public class GeolocationService {
     @POST
     @Path("/create")
     public Response create(Geolocation geolocation){
-
-        Key<Geolocation> key = geolocationDAO.save(geolocation);
+        Key<Geolocation> key = geolocationDAO.create(geolocation);
         if(key == null){
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -48,4 +39,25 @@ public class GeolocationService {
         }
         return Response.status(Response.Status.NO_CONTENT).build();
     }
+
+
+    @GET
+    @Path("{username}/{username2}")
+    public Response getDistance(@PathParam("username") String username, @PathParam("username") String username2){
+
+        double distance = geolocationDAO.getDistance(username, username2);
+        try{
+            JsonObject tokenJSON = new JsonObject();
+            tokenJSON.addProperty("distance",distance);
+            return Response.status(Response.Status.OK).entity(tokenJSON).build();
+        }
+        catch (Exception e){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+    }
+
+
+
+
 }
