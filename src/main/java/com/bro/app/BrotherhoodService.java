@@ -80,7 +80,7 @@ public class BrotherhoodService {
     @Path("/{token}/bros")
     public Response findBros(@PathParam("token") String token){
 
-        List<Brotherhood> bros = brotherhoodDAO.getBrotherhoods(token);
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token);
 
         try{
             if(!bros.isEmpty()){

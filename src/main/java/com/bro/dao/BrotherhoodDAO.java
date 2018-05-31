@@ -10,6 +10,7 @@ import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +31,23 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                 .asList().stream().findAny();
 
         if(R.isPresent() && S.isPresent()) {
-            Brotherhood brotherhood = new Brotherhood(S.get(), R.get());
-            return save(brotherhood);
+
+            Query<Brotherhood> query_brotherhood = getDatastore().find(Brotherhood.class);
+            query_brotherhood.or(
+                    query_brotherhood.and(
+                            query_brotherhood.criteria("sender").equal(S.get()),
+                            query_brotherhood.criteria("receiver").equal(R.get())
+                    ),
+                    query_brotherhood.and(
+                            query_brotherhood.criteria("sender").equal(R.get()),
+                            query_brotherhood.criteria("receiver").equal(S.get())
+                    )
+            );
+
+            if(query_brotherhood.asList().isEmpty()) {
+                Brotherhood brotherhood = new Brotherhood(S.get(), R.get());
+                return save(brotherhood);
+            }
         }
         return null;
     }
@@ -50,6 +66,7 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
             query_brotherhood.or(
                     query_brotherhood.criteria("sender").equal(user.get()),
                     query_brotherhood.criteria("receiver").equal(user.get()));
+
 
             return query_brotherhood.get();
         }
@@ -79,7 +96,7 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
     }
 
     /** Retourne la liste des brotherhoods **/
-    public List<Brotherhood> getBrotherhoods(String token) {
+    public List<User> getBrotherhoods(String token) {
 
          Optional<User> user = getDatastore().createQuery(User.class)
          .field("token").equal(token)
@@ -91,26 +108,19 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                  query_brotherhoods.criteria("sender").equal(user.get()),
                  query_brotherhoods.criteria("receiver").equal(user.get()));
 
-             return query_brotherhoods.asList();
+             if(!query_brotherhoods.asList().isEmpty()){
+                 List<User> bros = new ArrayList<>();
+                 for(Brotherhood b : query_brotherhoods.asList()) {
+                     if(b.getSender().getUsername().equals(user.get().getUsername())){
+                         bros.add(b.getReceiver());
+                     }
+                     else {
+                         bros.add(b.getSender());
+                     }
+                 }
+                 return bros;
+             }
          }
          return null;
     }
-
-    /** Vérifie si le user dont le token correspond est le sender dans une brotherhood **/
-    public boolean isSender(Brotherhood brotherhood, String token){
-        Optional<User> user = getDatastore().createQuery(User.class)
-                .field("token").equal(token)
-                .asList().stream().findAny();
-
-        if(user.isPresent()) {
-            Query<Brotherhood> sender = getDatastore().find(Brotherhood.class);
-            sender.field("sender").equal(user.get());
-
-            return sender.asList().isEmpty();
-        }
-        return false;
-    }
-
-
-
 }
