@@ -43,10 +43,10 @@ public class GeolocationService {
 
 
     @GET
-    @Path("distance/{username}/{username2}")
-    public Response getDistance(@PathParam("username") String username, @PathParam("username2") String username2){
+    @Path("distance")
+    public Response getDistance(User bro1, User bro2){
 
-        double distance = geolocationDAO.getDistance(username, username2);
+        double distance = geolocationDAO.getDistance(bro1.getUsername(), bro2.getUsername());
         System.out.println(distance);
         try{
             JsonObject tokenJSON = new JsonObject();
