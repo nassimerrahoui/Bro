@@ -35,9 +35,4 @@ public class MorphiaService {
     Datastore getDatastore() {
         return datastore;
     }
-
-    public void setDatastore(Datastore datastore) {
-        this.datastore = datastore;
-    }
-
 }

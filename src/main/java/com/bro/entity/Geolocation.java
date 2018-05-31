@@ -27,12 +27,14 @@ public class Geolocation {
 
     /**
      * constructeur vide pour le dao
-     * @param timestamp
      */
+    public Geolocation(){}
 
     /**
      * @param lat
      * @param lng
+     * @param user
+     * @param timestamp
      */
     public Geolocation(double lat, double lng, User user, Date timestamp) {
         this.lat = lat;

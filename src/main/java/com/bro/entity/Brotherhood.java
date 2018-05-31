@@ -1,7 +1,6 @@
 package com.bro.entity;
 
 import org.bson.types.ObjectId;
-
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
@@ -41,15 +40,7 @@ public class Brotherhood {
     public ObjectId getId() {
         return id;
     }
-
-    public Brolationship getBrolationship() {
-        return brolationship;
-    }
-
-    public void setBrolationship(Brolationship brolationship) {
-        this.brolationship = brolationship;
-    }
-
+    
     public User getSender() {
         return sender;
     }
