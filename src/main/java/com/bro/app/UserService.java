@@ -82,9 +82,9 @@ public class UserService {
 
     /** Déconnexion **/
     @POST
-    @Path("/{token}/logout")
+    @Path("{token}/logout")
     public Response logout(@PathParam("token") String token) {
-
+        System.out.println(token);
         if(token != null){
             userDAO.logout(token);
             return Response.status(Response.Status.RESET_CONTENT).build();

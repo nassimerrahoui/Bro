@@ -1,12 +1,15 @@
 package com.bro.entity;
 
 
-import jdk.nashorn.internal.ir.annotations.Reference;
+import org.mongodb.morphia.annotations.Reference;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.*;
 
-import javax.xml.ws.RequestWrapper;
+
+import java.util.Date;
 import java.util.Objects;
+import java.util.zip.DataFormatException;
 
 /** Latitude et doubleitude quelque part sur Terre, où se trouve ton/ta bro avec une précision variable. */
 @Entity("geolocation")
@@ -22,19 +25,23 @@ public class Geolocation {
     @Reference
     private User user;
 
+    private Date timestamp;
+
+
     /**
      * constructeur vide pour le dao
+     * @param timestamp
      */
-    public Geolocation() {}
 
     /**
      * @param lat
      * @param lng
      */
-    public Geolocation(double lat, double lng, User user) {
+    public Geolocation(double lat, double lng, User user, Date timestamp) {
         this.lat = lat;
         this.lng = lng;
         this.user = user;
+        this.timestamp = timestamp;
     }
 
     public double getLat() {
@@ -53,9 +60,16 @@ public class Geolocation {
         this.lng = lng;
     }
 
-    @Reference
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public void updateTimestamp(){
+        this.timestamp = new Date();
     }
 
     @Override
@@ -70,4 +84,5 @@ public class Geolocation {
     public int hashCode() {
         return Objects.hash(lat, lng);
     }
+
 }
