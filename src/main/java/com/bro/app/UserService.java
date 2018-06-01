@@ -149,4 +149,30 @@ public class UserService {
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
+
+    // TODO : A TESTER
+    /** Activer la geolocation **/
+    @POST
+    @Path("/{token}/lightside")
+    public Response lightSide(@PathParam("token") String token) {
+        Optional<User> user = userDAO.getUser(token);
+        if(user.isPresent()) {
+            userDAO.raising(user.get());
+            return Response.status(Response.Status.OK).build();
+        }
+        return  Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    // TODO : A TESTER
+    /** Désactiver la geolocation **/
+    @POST
+    @Path("/{token}/darkside")
+    public Response darkSide(@PathParam("token") String token) {
+        Optional<User> user = userDAO.getUser(token);
+        if(user.isPresent()) {
+            userDAO.shadow(user.get());
+            return Response.status(Response.Status.OK).build();
+        }
+        return  Response.status(Response.Status.BAD_REQUEST).build();
+    }
 }
