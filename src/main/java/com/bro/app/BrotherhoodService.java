@@ -36,13 +36,14 @@ public class BrotherhoodService {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    // TODO : A TESTER (ID)
     /** Accepte une brotherhood **/
     @POST
-    @Path("/{token}/{id}/accept")
-    public Response accept(@PathParam("token") String token, @PathParam("id") String id){
+    @Path("/accept")
+    public Response accept(List<User> users){
 
-        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(token, id);
+        User user = users.get(0);
+        User bro = users.get(1);
+        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
 
         try {
             if(thisBrotherhood != null){
@@ -57,13 +58,14 @@ public class BrotherhoodService {
         }
     }
 
-    // TODO : A TESTER (ID)
     /** Décline une brotherhood **/
     @POST
-    @Path("/{token}/{id}/deny")
-    public Response shutDown(@PathParam("token") String token, @PathParam("id") String id){
+    @Path("/deny")
+    public Response shutDown(List<User> users){
 
-        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(token, id);
+        User user = users.get(0);
+        User bro = users.get(1);
+        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
 
         try {
             if(thisBrotherhood != null){

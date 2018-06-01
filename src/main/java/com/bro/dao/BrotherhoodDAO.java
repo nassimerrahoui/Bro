@@ -51,22 +51,27 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return null;
     }
 
-    /** Retourne une brotherhood pour un user et l'id d'un brotherhood **/
-    public Brotherhood getBrotherhood(String token, String id) {
+    /** Retourne une brotherhood pour un user et son bro **/
+    public Brotherhood getBrotherhood(User user, User bro) {
 
-        Optional<User> user = getDatastore().createQuery(User.class)
-                .field("token").equal(token)
+        Optional<User> u = getDatastore().createQuery(User.class)
+                .field("username").equal(user.getUsername())
                 .asList().stream().findAny();
 
-        if(user.isPresent()) {
-            ObjectId objectId = new ObjectId(id);
+        Optional<User> b = getDatastore().createQuery(User.class)
+                .field("username").equal(bro.getUsername())
+                .asList().stream().findAny();
+
+        if(u.isPresent() && b.isPresent()) {
             Query<Brotherhood> query_brotherhood = getDatastore().find(Brotherhood.class);
-            query_brotherhood.field("_id").equal(objectId);
-            query_brotherhood.or(
-                    query_brotherhood.criteria("sender").equal(user.get()),
-                    query_brotherhood.criteria("receiver").equal(user.get()));
-
-
+            query_brotherhood.and(
+                    query_brotherhood.or(
+                            query_brotherhood.criteria("sender").equal(u.get()),
+                            query_brotherhood.criteria("receiver").equal(u.get())),
+                    query_brotherhood.or(
+                            query_brotherhood.criteria("sender").equal(b.get()),
+                            query_brotherhood.criteria("receiver").equal(b.get()))
+            );
             return query_brotherhood.get();
         }
         return null;
