@@ -9,6 +9,7 @@ import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,17 @@ import java.util.Optional;
 
 public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
 
-    public BrotherhoodDAO(Datastore ds) { super(ds); }
+    public BrotherhoodDAO(Datastore ds) {
+        super(ds);
+    }
 
-    /** Crée une brotherhood si elle n'existe pas **/
+    /**
+     * Creates a brotherhood between two users
+     *
+     * @param sender   user that sends request trying to make a broship with receiver
+     * @param receiver user that receive a broship invitation
+     * @return
+     */
     public Key<Brotherhood> create(User sender, User receiver) {
 
         Optional<User> S = getDatastore().createQuery(User.class)
@@ -29,7 +38,7 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                 .field("username").equal(receiver.getUsername())
                 .asList().stream().findAny();
 
-        if(R.isPresent() && S.isPresent()) {
+        if (R.isPresent() && S.isPresent()) {
 
             Query<Brotherhood> query_brotherhood = getDatastore().find(Brotherhood.class);
             query_brotherhood.or(
@@ -43,7 +52,7 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                     )
             );
 
-            if(query_brotherhood.asList().isEmpty()) {
+            if (query_brotherhood.asList().isEmpty()) {
                 Brotherhood brotherhood = new Brotherhood(S.get(), R.get());
                 return save(brotherhood);
             }
@@ -51,14 +60,21 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return null;
     }
 
-    /** Retourne une brotherhood pour un user et l'id d'un brotherhood **/
+
+    /**
+     * Gets brotherhood related to user associated to given token
+     *
+     * @param token user token
+     * @param id    brotherhood id
+     * @return Brotherhood or null
+     */
     public Brotherhood getBrotherhood(String token, String id) {
 
         Optional<User> user = getDatastore().createQuery(User.class)
                 .field("token").equal(token)
                 .asList().stream().findAny();
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             ObjectId objectId = new ObjectId(id);
             Query<Brotherhood> query_brotherhood = getDatastore().find(Brotherhood.class);
             query_brotherhood.field("_id").equal(objectId);
@@ -72,8 +88,13 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return null;
     }
 
-    /** Accepte une brotherhood **/
-    public UpdateResults accept(Brotherhood brotherhood){
+    /**
+     * Accept a brotherhood request, they will become bro forever
+     *
+     * @param brotherhood a brotherhood
+     * @return UpdateResults
+     */
+    public UpdateResults accept(Brotherhood brotherhood) {
         Query<Brotherhood> query = getDatastore().find(Brotherhood.class);
         query.field("_id").equal(brotherhood.getId());
 
@@ -83,8 +104,13 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return update(query, ops);
     }
 
-    /** Décline une brotherhood **/
-    public UpdateResults deny(Brotherhood brotherhood){
+    /**
+     * Deny a brotherhood
+     *
+     * @param brotherhood a brotherhood
+     * @return UpdateResults
+     */
+    public UpdateResults deny(Brotherhood brotherhood) {
         Query<Brotherhood> query = getDatastore().find(Brotherhood.class);
         query.field("_id").equal(brotherhood.getId());
 
@@ -94,32 +120,36 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return update(query, ops);
     }
 
-    /** Retourne la liste des brotherhoods **/
+    /**
+     * Gets all brotherhoods related to a given token associated to a user
+     *
+     * @param token a token of a user
+     * @return UpdateResults
+     */
     public List<User> getBrotherhoods(String token) {
 
-         Optional<User> user = getDatastore().createQuery(User.class)
-         .field("token").equal(token)
-         .asList().stream().findAny();
+        Optional<User> user = getDatastore().createQuery(User.class)
+                .field("token").equal(token)
+                .asList().stream().findAny();
 
-         if(user.isPresent()) {
-             Query<Brotherhood> query_brotherhoods = getDatastore().find(Brotherhood.class);
-             query_brotherhoods.or(
-                 query_brotherhoods.criteria("sender").equal(user.get()),
-                 query_brotherhoods.criteria("receiver").equal(user.get()));
+        if (user.isPresent()) {
+            Query<Brotherhood> query_brotherhoods = getDatastore().find(Brotherhood.class);
+            query_brotherhoods.or(
+                    query_brotherhoods.criteria("sender").equal(user.get()),
+                    query_brotherhoods.criteria("receiver").equal(user.get()));
 
-             if(!query_brotherhoods.asList().isEmpty()){
-                 List<User> bros = new ArrayList<>();
-                 for(Brotherhood b : query_brotherhoods.asList()) {
-                     if(b.getSender().getUsername().equals(user.get().getUsername())){
-                         bros.add(b.getReceiver());
-                     }
-                     else {
-                         bros.add(b.getSender());
-                     }
-                 }
-                 return bros;
-             }
-         }
-         return null;
+            if (!query_brotherhoods.asList().isEmpty()) {
+                List<User> bros = new ArrayList<>();
+                for (Brotherhood b : query_brotherhoods.asList()) {
+                    if (b.getSender().getUsername().equals(user.get().getUsername())) {
+                        bros.add(b.getReceiver());
+                    } else {
+                        bros.add(b.getSender());
+                    }
+                }
+                return bros;
+            }
+        }
+        return null;
     }
 }

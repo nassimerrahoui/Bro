@@ -3,9 +3,13 @@ package com.bro.entity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
+
 import java.util.List;
 
-/** Représente un bro **/
+/**
+ * @TODO verifier l'utilisation de l'attribut enemies qui semble être inutilisé
+ * Represents a bro
+ */
 @Entity("user")
 @Indexes(@Index(fields = {@Field("username"), @Field("email")}, options = @IndexOptions(unique = true)))
 public class User {
@@ -29,9 +33,10 @@ public class User {
     private List<User> enemies;
 
     /**
-     * constructeur vide pour le dao
+     * Empty constructor for DAO
      */
-    public User(){}
+    public User() {
+    }
 
     /**
      * @param username
@@ -49,6 +54,9 @@ public class User {
     }
 
 
+    /**
+     * Encrypts a password with a sha256 algorithm using apache codecs
+     */
     public void encrypt() {
         this.password = DigestUtils.sha256Hex(password);
     }
@@ -86,5 +94,7 @@ public class User {
         return isLocation;
     }
 
-    public List<User> getEnemies() { return enemies; }
+    public List<User> getEnemies() {
+        return enemies;
+    }
 }

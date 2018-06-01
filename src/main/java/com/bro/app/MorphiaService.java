@@ -4,13 +4,15 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 
-/** Morphia est un ORM permettant de mapper les classes sous formes d'entités **/
+/**
+ * Manages morphia ORM that allows entity class mapping
+ */
 public class MorphiaService {
 
     private Morphia morphia;
     private Datastore datastore;
 
-    MorphiaService(){
+    MorphiaService() {
 
         // MongoClient pour se connecter sur le localhost
         // Lancer MongoDB avant de run l'application

@@ -7,6 +7,7 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.FindOptions;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +19,17 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         super(ds);
     }
 
-    /** Sauvegarder une position en base **/
+    /**
+     * Saves a GPS position at current time
+     *
+     * @param geo Geolocation object
+     * @return Key<T> statement or null
+     */
     public Key<Geolocation> create(Geolocation geo) {
         Optional<User> user = getDatastore().createQuery(User.class)
                 .field("username").equal(geo.getUser().getUsername())
                 .asList().stream().findAny();
-        if(user.isPresent()){
+        if (user.isPresent()) {
             geo.setUser(user.get());
             geo.updateTimestamp();
             return save(geo);
@@ -31,16 +37,28 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         return null;
     }
 
-    /** Retourne les 100 dernières positions d'un user **/
-    public List<Geolocation> getLastLocation(String token){
+
+    /**
+     * @param token token
+     * @return List<Geolocation>
+     * @TODO À tester
+     * get 100 last GPS location
+     */
+    public List<Geolocation> getLastLocation(String token) {
 
         return createQuery()
                 .filter("user.token", token)
                 .asList(new FindOptions().limit(100));
     }
 
-    /** Retourne la distance entre deux user **/
-    public double getDistance(String username, String username2){
+    /**
+     * get GPS distance between two users by their username
+     *
+     * @param username  a username
+     * @param username2 a second username
+     * @return double distance or NaN
+     */
+    public double getDistance(String username, String username2) {
         System.out.println("try");
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("username").equal(username)
@@ -50,7 +68,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .field("username").equal(username2)
                 .asList().stream().findAny();
 
-        if(userQuery.isPresent() && user2Query.isPresent()) {
+        if (userQuery.isPresent() && user2Query.isPresent()) {
 
             Geolocation geo = getDatastore().createQuery(Geolocation.class)
                     .filter("user.username", userQuery.get().getUsername()).get();

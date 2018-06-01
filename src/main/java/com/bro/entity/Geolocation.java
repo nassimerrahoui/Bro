@@ -4,11 +4,13 @@ import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
+
 import java.util.Date;
 import java.util.Objects;
 
-
-/** Représente un position d'un bro quelque part sur Terre **/
+/**
+ * Represent a GPS position for a user at a given time
+ */
 @Entity("geolocation")
 public class Geolocation {
 
@@ -26,9 +28,10 @@ public class Geolocation {
 
 
     /**
-     * constructeur vide pour le dao
+     * Empty constructor for DAO
      */
-    public Geolocation(){}
+    public Geolocation() {
+    }
 
     /**
      * @param lat
@@ -47,27 +50,19 @@ public class Geolocation {
         return lat;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
     public double getLng() {
         return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user){
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public void updateTimestamp(){
+    public void updateTimestamp() {
         this.timestamp = new Date();
     }
 

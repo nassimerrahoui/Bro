@@ -2,6 +2,7 @@ package com.bro.dao;
 
 import java.util.Optional;
 import java.util.UUID;
+
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import org.bson.types.ObjectId;
@@ -16,14 +17,24 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         super(ds);
     }
 
-    /** Récupère un user **/
+    /**
+     * Gets a user with a given token
+     *
+     * @param token token associated to targeted user
+     * @return User
+     */
     public Optional<User> getUser(String token) {
         return createQuery()
                 .field("token").equal(token)
                 .asList().stream().findAny();
     }
 
-    /** Check sur l'existence du mail **/
+    /**
+     * Checks if an email is already associate with a user
+     *
+     * @param email
+     * @return Boolean
+     */
     public Boolean emailExists(String email) {
         return createQuery()
                 .field("email").equal(email)
@@ -31,7 +42,13 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
 
-    /** Se connecter **/
+    /**
+     * Generates and sets a token if given email is associated to given encrypted password
+     *
+     * @param email    email of user
+     * @param password encrypted password
+     * @return generated token or empty string
+     */
     public String authenticate(String email, String password) {
         Query<User> query = createQuery().
                 field("email").equal(email).
@@ -50,7 +67,11 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return "";
     }
 
-    /** Déconnexion et suppression du token **/
+    /**
+     * Disconnects a user and removes is associated token
+     *
+     * @param token token of user to be disconnect
+     */
     public void logout(String token) {
         Query<User> query = createQuery().
                 field("token").equal(token);
@@ -62,8 +83,12 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         update(query, ops);
     }
 
-
-    /** Mise à jours des information du user **/
+    /**
+     * Updates a user data
+     *
+     * @param user a user
+     * @return UpdateResults
+     */
     public UpdateResults updateUser(User user) {
 
         Query<User> query = createQuery()
@@ -79,7 +104,12 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         return update(query, ops);
     }
 
-    /** Ajout enemy dans la liste enemies et suppression de la bromance **/
+    /**
+     * Add a enemy relationship and removes brotherhood if it exists
+     *
+     * @param user
+     * @param username
+     */
     public void addEnemy(User user, User username) {
 
         Query<User> query = createQuery()
@@ -97,7 +127,12 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         getDatastore().delete(bromance);
     }
 
-    /** Suppression du bro dans la liste enemies **/
+    /**
+     * Removes an enemy
+     *
+     * @param user     a user
+     * @param username username of enemy to be removed
+     */
     public void deleteEnemy(User user, User username) {
 
         Query<User> query = createQuery()

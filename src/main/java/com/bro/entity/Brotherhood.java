@@ -5,7 +5,9 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 
-/** Représente une relation entre deux bros **/
+/**
+ * Represents a broship between two bros
+ */
 @Entity("brotherhood")
 public class Brotherhood {
 
@@ -27,11 +29,12 @@ public class Brotherhood {
     private User receiver;
 
     /**
-     * constructeur vide pour le dao
+     * Empty constructor for DAO
      */
-    public Brotherhood(){}
+    public Brotherhood() {
+    }
 
-    public Brotherhood(User sender, User receiver){
+    public Brotherhood(User sender, User receiver) {
         this.brolationship = Brolationship.AWAITING;
         this.sender = sender;
         this.receiver = receiver;
@@ -40,7 +43,7 @@ public class Brotherhood {
     public ObjectId getId() {
         return id;
     }
-    
+
     public User getSender() {
         return sender;
     }
