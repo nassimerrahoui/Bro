@@ -1,5 +1,6 @@
 package com.bro.entity;
 
+import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
@@ -10,10 +11,8 @@ import java.util.Objects;
 
 /** Représente un position d'un bro quelque part sur Terre **/
 @Entity("geolocation")
+@Embedded
 public class Geolocation {
-
-    @Id
-    private ObjectId id;
 
     private double lat;
 

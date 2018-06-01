@@ -28,7 +28,8 @@ public class User {
 
     private List<User> enemies;
 
-    private Geolocation position = null;
+    @Embedded
+    private Geolocation position = new Geolocation();
 
     /**
      * constructeur vide pour le dao
