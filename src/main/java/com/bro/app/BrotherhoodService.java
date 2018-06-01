@@ -3,6 +3,8 @@ package com.bro.app;
 import com.bro.dao.BrotherhoodDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import javax.ws.rs.*;
@@ -85,7 +87,6 @@ public class BrotherhoodService {
 
         try{
             if(!bros.isEmpty()){
-
                 return Response.status(Response.Status.OK).entity(bros).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();

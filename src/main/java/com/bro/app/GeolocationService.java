@@ -29,20 +29,6 @@ public class GeolocationService {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    // TODO : A TESTER
-    @GET
-    @Path("/{token}/history")
-    public Response getLocationHistory(@PathParam("token") String token){
-
-        List<Geolocation> history = geolocationDAO.getLastLocation(token);
-
-        if(!history.isEmpty()) {
-            return Response.status(Response.Status.OK).entity(history).build();
-        }
-        return Response.status(Response.Status.NO_CONTENT).build();
-    }
-
-
     @GET
     @Path("/distance")
     public Response getDistance(User bro1, User bro2){

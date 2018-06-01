@@ -22,7 +22,7 @@ public class Geolocation {
     @Reference
     private User user;
 
-    private Date timestamp;
+    private Date timestamp = new Date();
 
 
     /**
@@ -34,13 +34,11 @@ public class Geolocation {
      * @param lat
      * @param lng
      * @param user
-     * @param timestamp
      */
-    public Geolocation(double lat, double lng, User user, Date timestamp) {
+    public Geolocation(double lat, double lng, User user) {
         this.lat = lat;
         this.lng = lng;
         this.user = user;
-        this.timestamp = timestamp;
     }
 
     public double getLat() {
@@ -65,10 +63,6 @@ public class Geolocation {
 
     public void setUser(User user){
         this.user = user;
-    }
-
-    public void updateTimestamp(){
-        this.timestamp = new Date();
     }
 
     @Override

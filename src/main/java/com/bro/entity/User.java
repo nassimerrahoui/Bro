@@ -28,6 +28,8 @@ public class User {
 
     private List<User> enemies;
 
+    private Geolocation position = null;
+
     /**
      * constructeur vide pour le dao
      */
@@ -87,4 +89,12 @@ public class User {
     }
 
     public List<User> getEnemies() { return enemies; }
+
+    public Geolocation getPosition() {
+        return position;
+    }
+
+    public void setPosition(Geolocation position) {
+        this.position = position;
+    }
 }

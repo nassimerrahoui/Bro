@@ -7,6 +7,9 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.FindOptions;
+import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,18 +28,22 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .asList().stream().findAny();
         if(user.isPresent()){
             geo.setUser(user.get());
-            geo.updateTimestamp();
-            return save(geo);
+            Key<Geolocation> key = save(geo);
+            updateLastLocation(geo, user.get());
+            return key;
         }
         return null;
     }
 
     /** Retourne les 100 dernières positions d'un user **/
-    public List<Geolocation> getLastLocation(String token){
+    private void updateLastLocation(Geolocation geo, User user){
+        Query<User> userQuery = getDatastore().createQuery(User.class)
+                .field("username").equal(user.getUsername());
 
-        return createQuery()
-                .filter("user.token", token)
-                .asList(new FindOptions().limit(100));
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .set("position", geo);
+        getDatastore().update(userQuery.getKey(),ops);
     }
 
     /** Retourne la distance entre deux user **/
