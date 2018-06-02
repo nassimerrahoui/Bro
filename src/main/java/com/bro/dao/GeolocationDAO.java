@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Double.NaN;
-
 public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
     public GeolocationDAO(Datastore ds) {
@@ -47,12 +45,12 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @param nbGeo number of geolocation to be returned
      * @return List<Geolocation>
      */
-    public List<Geolocation> getNLastLocations(String token, int nbGeo){
+    public List<Geolocation> getNLastLocations(String token, int nbGeo) {
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("token").equal(token)
                 .asList().stream().findAny();
 
-        if(!userQuery.isPresent()){
+        if (!userQuery.isPresent()) {
             return null;
         }
 
@@ -67,10 +65,9 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @param token
      * @return Geolocation
      */
-    public Geolocation getLastLocation(String token){
+    public Geolocation getLastLocation(String token) {
         return this.getNLastLocations(token, 1).get(0);
     }
-
 
 
     /**
@@ -80,7 +77,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @param username2 a second username
      * @return double distance or NaN
      */
-    public double getDistance(String username, String username2) {
+    public Double getDistance(String username, String username2) {
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("username").equal(username)
                 .asList().stream().findAny();
@@ -107,38 +104,35 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
             double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c;
         }
-        return NaN;
+        return null;
     }
 
     /**
      * Takes an user and his bros. Then calculates distance in km
      * between each of them who activated isLocalizable option.
-     * @TODO: corriger le bug des isLocalizable() toujours à false
      *
      * @param token a token of an user
-     * @param bros a list of broship
-     * @return HashMap<String, Double> key: bro username, value: distance from main user.
+     * @param bros  a list of broship
+     * @return HashMap<String                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Double> key: bro username, value: distance from main user.
+     * @TODO: corriger le bug des isLocalizable() toujours à false
      */
-    public HashMap<String, Double> getBrosDistance(String token, List<User> bros){
-        HashMap<String, Double> mapDistance= new HashMap<String,Double>();
+    public HashMap<String, Double> getBrosDistance(String token, List<User> bros) {
+
+
+        HashMap<String, Double> mapDistance = new HashMap<String, Double>();
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("token").equal(token)
                 .asList().stream().findAny();
         if (userQuery.isPresent()) {
-            User user = userQuery.get();
-            System.out.println(user.getUsername() + user.getEmail()+
-                    " " + user.isLocalizable().toString());
             for (User bro : bros) {
-                System.out.println(bro.getUsername()+" " + bro.isLocalizable().toString());
-                if (user.isLocalizable() && bro.isLocalizable()) {
-
-                    mapDistance.put(user.getUsername(), this.getDistance(user.getUsername(), bro.getUsername()));
+                if (userQuery.get().isLocalizable() &&
+                        bro.isLocalizable() &&
+                        this.getDistance(userQuery.get().getUsername(), bro.getUsername()) != null) {
+                    mapDistance.put(bro.getUsername(), this.getDistance(userQuery.get().getUsername(), bro.getUsername()));
                 }
 
             }
         }
-        System.out.println(mapDistance.size());
-
         return mapDistance;
     }
 

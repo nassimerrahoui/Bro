@@ -51,4 +51,8 @@ public class Brotherhood {
     public User getReceiver() {
         return receiver;
     }
+
+    public Brolationship getBrolationship() {
+        return brolationship;
+    }
 }

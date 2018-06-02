@@ -124,10 +124,9 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
      * Gets all brotherhoods related to a given token associated to an user
      *
      * @param token a token of an user
-     * @return UpdateResults
+     * @return List<User>
      */
     public List<User> getBrotherhoods(String token) {
-
         Optional<User> user = getDatastore().createQuery(User.class)
                 .field("token").equal(token)
                 .asList().stream().findAny();
@@ -145,6 +144,42 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
                         bros.add(b.getReceiver());
                     } else {
                         bros.add(b.getSender());
+                    }
+                }
+                return bros;
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Gets all brotherhoods related to a given token associated to an user for a brolationship
+     * See Brotherhood class for more information
+     *
+     * @param token a token of an user
+     * @return List<User>
+     */
+    public List<User> getBrotherhoods(String token, Brotherhood.Brolationship brolationship) {
+        Optional<User> user = getDatastore().createQuery(User.class)
+                .field("token").equal(token)
+                .asList().stream().findAny();
+
+        if (user.isPresent()) {
+            Query<Brotherhood> query_brotherhoods = getDatastore().find(Brotherhood.class);
+            query_brotherhoods.or(
+                    query_brotherhoods.criteria("sender").equal(user.get()),
+                    query_brotherhoods.criteria("receiver").equal(user.get()));
+
+            if (!query_brotherhoods.asList().isEmpty()) {
+                List<User> bros = new ArrayList<>();
+                for (Brotherhood b : query_brotherhoods.asList()) {
+                    if (b.getBrolationship() == brolationship) {
+                        if (b.getSender().getUsername().equals(user.get().getUsername())) {
+                            bros.add(b.getReceiver());
+                        } else {
+                            bros.add(b.getSender());
+                        }
                     }
                 }
                 return bros;

@@ -30,8 +30,9 @@ public class UserService {
     @Path("/create")
     public Response create(User user) {
         user.encrypt();
+        user.setDefaultValue();
         if (!EmailValidator.getInstance().isValid(user.getEmail())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Format de l'email invalide").build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Format de l'email invalide").build();
         }
         if (userDAO.emailExists(user.getEmail())) {
             return Response.status(Response.Status.CONFLICT).entity("L'email existe déjà").build();

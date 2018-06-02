@@ -3,8 +3,10 @@ package com.bro.app;
 
 import com.bro.dao.BrotherhoodDAO;
 import com.bro.dao.GeolocationDAO;
+import com.bro.entity.Brotherhood;
 import com.bro.entity.Geolocation;
 import com.bro.entity.User;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
@@ -12,6 +14,7 @@ import org.mongodb.morphia.Key;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -95,8 +98,12 @@ public class GeolocationService {
     @GET
     @Path("/{token}/get_friends_distance")
     public Response getBrosDistance(@PathParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token);
-        geolocationDAO.getBrosDistance(token, bros);
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        HashMap<String, Double> distance = geolocationDAO.getBrosDistance(token, bros);
+        String resp = new Gson().toJson(distance);
+        if(!distance.isEmpty()){
+            return Response.status(Response.Status.OK).entity(resp).build();
+        }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 

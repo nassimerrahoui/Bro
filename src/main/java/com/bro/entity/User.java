@@ -28,7 +28,7 @@ public class User {
 
     private String token = "";
 
-    private Boolean isLocalizable = false;
+    private Boolean localizable;
 
     private List<User> enemies;
 
@@ -91,10 +91,21 @@ public class User {
     }
 
     public Boolean isLocalizable() {
-        return isLocalizable;
+        return this.localizable;
     }
 
     public List<User> getEnemies() {
         return enemies;
+    }
+
+    public void setDefaultValue(){
+        if(this.localizable == null){
+            this.localizable = false;
+        }
+
+    }
+
+    public String toString(){
+        return this.firstName +" "+ this.lastName + " <" + this.email + "> " + this.username;
     }
 }
