@@ -1,9 +1,6 @@
 package com.bro.entity;
 
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Reference;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.*;
 import org.bson.types.ObjectId;
 import java.util.Date;
 import java.util.Objects;
@@ -11,14 +8,16 @@ import java.util.Objects;
 
 /** Représente un position d'un bro quelque part sur Terre **/
 @Entity("geolocation")
-@Embedded
 public class Geolocation {
+
+    @Id
+    private ObjectId id;
 
     private double lat;
 
     private double lng;
 
-    @Reference
+    @Reference(idOnly = true, lazy = true)
     private User user;
 
     private Date timestamp = new Date();
@@ -44,16 +43,8 @@ public class Geolocation {
         return lat;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
     public double getLng() {
         return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
     }
 
     public User getUser() {

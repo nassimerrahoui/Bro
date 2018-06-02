@@ -64,14 +64,12 @@ public class UserService {
 
     /** Connexion persistante **/
     @GET
-    @Path("/{token}")
-    public Response getUser(@PathParam("token") String token) {
+    @Path("/isconnected")
+    public Response getUser(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
         try {
             if(user.isPresent()){
-                JsonObject tokenJSON = new JsonObject();
-                tokenJSON.addProperty("token",token);
-                return Response.status(Response.Status.OK).entity(tokenJSON).build();
+                return Response.status(Response.Status.OK).entity(user).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -82,8 +80,8 @@ public class UserService {
 
     /** Déconnexion **/
     @POST
-    @Path("/{token}/logout")
-    public Response logout(@PathParam("token") String token) {
+    @Path("/logout")
+    public Response logout(@HeaderParam("token") String token) {
         System.out.println(token);
         if(token != null){
             userDAO.logout(token);
@@ -110,7 +108,7 @@ public class UserService {
     /** Liste des bro devenu des enemies**/
     @GET
     @Path("/{token}/enemies")
-    public Response getEnemies(@PathParam("token") String token) {
+    public Response getEnemies(@HeaderParam("token") String token) {
 
         Optional<User> user = userDAO.getUser(token);
 
@@ -127,8 +125,8 @@ public class UserService {
     // TODO : A TESTER
     /** Bloquer un ennemi **/
     @POST
-    @Path("/{token}/enemies/add")
-    public Response addEnemy(@PathParam("token") String token, User username) {
+    @Path("/enemies/add")
+    public Response addEnemy(@HeaderParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
             userDAO.addEnemy(user.get(), username);
@@ -140,8 +138,8 @@ public class UserService {
     // TODO : A TESTER
     /** Débloquer un bro **/
     @POST
-    @Path("/{token}/enemies/delete")
-    public Response deleteEnemy(@PathParam("token") String token, User username) {
+    @Path("/enemies/delete")
+    public Response deleteEnemy(@HeaderParam("token") String token, User username) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
             userDAO.deleteEnemy(user.get(), username);
@@ -153,8 +151,8 @@ public class UserService {
     // TODO : A TESTER
     /** Activer la geolocation **/
     @POST
-    @Path("/{token}/lightside")
-    public Response lightSide(@PathParam("token") String token) {
+    @Path("/lightside")
+    public Response lightSide(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
             userDAO.raising(user.get());
@@ -166,8 +164,8 @@ public class UserService {
     // TODO : A TESTER
     /** Désactiver la geolocation **/
     @POST
-    @Path("/{token}/darkside")
-    public Response darkSide(@PathParam("token") String token) {
+    @Path("/darkside")
+    public Response darkSide(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
         if(user.isPresent()) {
             userDAO.shadow(user.get());

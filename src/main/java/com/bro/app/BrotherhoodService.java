@@ -3,8 +3,9 @@ package com.bro.app;
 import com.bro.dao.BrotherhoodDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
+import com.bro.filter.GsonProvider;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import javax.ws.rs.*;
@@ -82,14 +83,14 @@ public class BrotherhoodService {
 
     /** Retourne la liste des brotherhood**/
     @GET
-    @Path("/{token}/bros")
-    public Response getBros(@PathParam("token") String token){
+    @Path("/bros")
+    public Response getBros(@HeaderParam("token") String token){
 
         List<User> bros = brotherhoodDAO.getBrotherhoods(token);
 
         try{
             if(!bros.isEmpty()){
-                return Response.status(Response.Status.OK).entity(bros).build();
+                return Response.ok(bros).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
