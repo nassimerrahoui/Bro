@@ -72,8 +72,6 @@ public class BrotherhoodService {
         }
     }
 
-    // TODO : A TESTER (ID)
-
     /**
      * Reject a brotherhood
      *
@@ -110,15 +108,14 @@ public class BrotherhoodService {
      * Return brotherhood list
      */
     @GET
-    @Path("/{token}/bros")
-    public Response getBros(@PathParam("token") String token) {
+    @Path("/bros")
+    public Response getBros(@HeaderParam("token") String token){
 
         List<User> bros = brotherhoodDAO.getBrotherhoods(token);
 
-        try {
-            if (!bros.isEmpty()) {
-
-                return Response.status(Response.Status.OK).entity(bros).build();
+        try{
+            if(!bros.isEmpty()){
+                return Response.ok(bros).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
