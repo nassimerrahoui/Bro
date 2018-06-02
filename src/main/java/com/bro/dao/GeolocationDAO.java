@@ -8,6 +8,7 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +31,22 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .field("username").equal(geo.getUser().getUsername())
                 .asList().stream().findAny();
         if (user.isPresent()) {
-            geo.setUser(user.get());
-            return save(geo);
+            Key<Geolocation> key = save(geo);
+            updateLastLocation(geo, user.get());
+            return key;
         }
         return null;
+    }
+
+    private void updateLastLocation(Geolocation geo, User user) {
+        Query<User> userQuery = getDatastore().createQuery(User.class)
+                .field("username").equal(user.getUsername());
+
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .set("position", geo);
+
+        getDatastore().update(userQuery.getKey(), ops);
     }
 
     /**
