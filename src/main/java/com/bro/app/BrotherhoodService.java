@@ -43,11 +43,12 @@ public class BrotherhoodService {
     }
 
     /**
+     * Accepts a brotherhood
+     *
      * @param token token of user
      * @param id    id of brotherhood
      * @return Response HTTP status
      * @TODO : À Tester (ID)
-     * Accepte a brotherhood
      */
     @POST
     @Path("/{token}/{id}/accept")
@@ -72,7 +73,7 @@ public class BrotherhoodService {
     /**
      * Reject a brotherhood
      *
-     * @param token a user token
+     * @param token an user token
      * @param id    a brotherhood id
      * @return Response HTTP Status
      */

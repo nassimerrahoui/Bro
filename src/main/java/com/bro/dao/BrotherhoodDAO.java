@@ -121,9 +121,9 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
     }
 
     /**
-     * Gets all brotherhoods related to a given token associated to a user
+     * Gets all brotherhoods related to a given token associated to an user
      *
-     * @param token a token of a user
+     * @param token a token of an user
      * @return UpdateResults
      */
     public List<User> getBrotherhoods(String token) {

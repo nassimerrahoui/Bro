@@ -7,7 +7,9 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.FindOptions;
+import org.mongodb.morphia.query.Query;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +33,6 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .asList().stream().findAny();
         if (user.isPresent()) {
             geo.setUser(user.get());
-            geo.updateTimestamp();
             return save(geo);
         }
         return null;
@@ -39,27 +40,47 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
 
     /**
-     * @param token token
+     * Takes a token and a number n and returns n last geolocations
+     * associated with this user using the timestamp creation
+     *
+     * @param token a token
+     * @param nbGeo number of geolocation to be returned
      * @return List<Geolocation>
-     * @TODO À tester
-     * get 100 last GPS location
      */
-    public List<Geolocation> getLastLocation(String token) {
+    public List<Geolocation> getNLastLocations(String token, int nbGeo){
+        Optional<User> userQuery = getDatastore().createQuery(User.class)
+                .field("token").equal(token)
+                .asList().stream().findAny();
 
-        return createQuery()
-                .filter("user.token", token)
-                .asList(new FindOptions().limit(100));
+        if(!userQuery.isPresent()){
+            return null;
+        }
+
+        Query<Geolocation> geolocationQuery = getDatastore().find(Geolocation.class);
+        geolocationQuery.criteria("user").equal(userQuery.get());
+        return geolocationQuery.order("-_id").asList(new FindOptions().limit(nbGeo));
     }
 
     /**
-     * get GPS distance between two users by their username
+     * Gets last known location for a given user through his token
      *
-     * @param username  a username
+     * @param token
+     * @return Geolocation
+     */
+    public Geolocation getLastLocation(String token){
+        return this.getNLastLocations(token, 1).get(0);
+    }
+
+
+
+    /**
+     * Gets GPS distance between two users by their username
+     *
+     * @param username  an username
      * @param username2 a second username
      * @return double distance or NaN
      */
     public double getDistance(String username, String username2) {
-        System.out.println("try");
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("username").equal(username)
                 .asList().stream().findAny();
@@ -70,10 +91,8 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
         if (userQuery.isPresent() && user2Query.isPresent()) {
 
-            Geolocation geo = getDatastore().createQuery(Geolocation.class)
-                    .filter("user.username", userQuery.get().getUsername()).get();
-            Geolocation geo2 = getDatastore().createQuery(Geolocation.class)
-                    .filter("user.username", user2Query.get().getUsername()).get();
+            Geolocation geo = getLastLocation(userQuery.get().getToken());
+            Geolocation geo2 = getLastLocation(user2Query.get().getToken());
 
             double latUser = (geo.getLat() * Math.PI / 180);
             double lngUser = (geo.getLng() * Math.PI / 180);
@@ -89,6 +108,38 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
             return R * c;
         }
         return NaN;
+    }
+
+    /**
+     * Takes an user and his bros. Then calculates distance in km
+     * between each of them who activated isLocalizable option.
+     * @TODO: corriger le bug des isLocalizable() toujours à false
+     *
+     * @param token a token of an user
+     * @param bros a list of broship
+     * @return HashMap<String, Double> key: bro username, value: distance from main user.
+     */
+    public HashMap<String, Double> getBrosDistance(String token, List<User> bros){
+        HashMap<String, Double> mapDistance= new HashMap<String,Double>();
+        Optional<User> userQuery = getDatastore().createQuery(User.class)
+                .field("token").equal(token)
+                .asList().stream().findAny();
+        if (userQuery.isPresent()) {
+            User user = userQuery.get();
+            System.out.println(user.getUsername() + user.getEmail()+
+                    " " + user.isLocalizable().toString());
+            for (User bro : bros) {
+                System.out.println(bro.getUsername()+" " + bro.isLocalizable().toString());
+                if (user.isLocalizable() && bro.isLocalizable()) {
+
+                    mapDistance.put(user.getUsername(), this.getDistance(user.getUsername(), bro.getUsername()));
+                }
+
+            }
+        }
+        System.out.println(mapDistance.size());
+
+        return mapDistance;
     }
 
 

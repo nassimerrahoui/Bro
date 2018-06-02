@@ -28,7 +28,7 @@ public class User {
 
     private String token = "";
 
-    private Boolean isLocation = false;
+    private Boolean isLocalizable = false;
 
     private List<User> enemies;
 
@@ -90,8 +90,8 @@ public class User {
         return token;
     }
 
-    public Boolean getIsLocation() {
-        return isLocation;
+    public Boolean isLocalizable() {
+        return isLocalizable;
     }
 
     public List<User> getEnemies() {

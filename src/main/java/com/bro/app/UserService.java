@@ -22,8 +22,10 @@ public class UserService {
     private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
     /**
-     * Creation du compte dans l'application
-     **/
+     * Creates a new bro user
+     * @param user a user
+     * @return 42, response of the universe of bros
+     */
     @POST
     @Path("/create")
     public Response create(User user) {
@@ -45,8 +47,11 @@ public class UserService {
     }
 
     /**
-     * Connexion avec email et password
-     **/
+     * @TODO pouvoir tester avec le username aussi
+     * Connects an user calling authenticate method
+     * @param user a user
+     * @return JSONified token
+     */
     @POST
     @Path("/auth")
     public Response auth(User user) {
@@ -61,6 +66,13 @@ public class UserService {
         }
     }
 
+    /**
+     * Authenticate a user
+     * @param email email of user
+     * @param password clear password user
+     * @return token
+     * @throws Exception
+     */
     private String authenticate(String email, String password) throws Exception {
         String token = userDAO.authenticate(email, password);
         if (token.isEmpty()) {
@@ -70,8 +82,11 @@ public class UserService {
     }
 
     /**
-     * Connexion persistante
-     **/
+     * Makes a persistant connection
+     *
+     * @param token token of a user
+     * @return JSONified token
+     */
     @GET
     @Path("/{token}")
     public Response getUser(@PathParam("token") String token) {
@@ -89,8 +104,11 @@ public class UserService {
     }
 
     /**
-     * Déconnexion
-     **/
+     * Disconnects an user
+     *
+     * @param token token of user to be disconnect
+     * @return Response HTTP Status
+     */
     @POST
     @Path("/{token}/logout")
     public Response logout(@PathParam("token") String token) {
@@ -105,8 +123,11 @@ public class UserService {
     // TODO : A TESTER
 
     /**
-     * Mettre à jours les informations de ton compte
-     **/
+     * Update user informations
+     *
+     * @param user user
+     * @return Response HTTP Status
+     */
     @PUT
     @Path("/settings")
     public Response updateUser(User user) {
@@ -122,8 +143,11 @@ public class UserService {
     // TODO : A TESTER
 
     /**
-     * Liste des bro devenu des enemies
-     **/
+     * Gets all enemies of an user
+     *
+     * @param token token of an user
+     * @return Response HTTP Status
+     */
     @GET
     @Path("/{token}/enemies")
     public Response getEnemies(@PathParam("token") String token) {
@@ -143,8 +167,12 @@ public class UserService {
     // TODO : A TESTER
 
     /**
-     * Bloquer un ennemi
-     **/
+     * add an enemy
+     *
+     * @param token    token of user who wants to add an enemy
+     * @param username enemy to be add
+     * @return Response HTTP Status
+     */
     @POST
     @Path("/{token}/enemies/add")
     public Response addEnemy(@PathParam("token") String token, User username) {
@@ -159,8 +187,12 @@ public class UserService {
     // TODO : A TESTER
 
     /**
-     * Débloquer un bro
-     **/
+     * Removes an enemy
+     *
+     * @param token    token of user who wants to remove an enemy
+     * @param username enemy to be removed
+     * @return Response HTTP Status
+     */
     @POST
     @Path("/{token}/enemies/delete")
     public Response deleteEnemy(@PathParam("token") String token, User username) {

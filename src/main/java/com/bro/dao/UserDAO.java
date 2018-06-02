@@ -18,7 +18,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
     /**
-     * Gets a user with a given token
+     * Gets an user with a given token
      *
      * @param token token associated to targeted user
      * @return User
@@ -30,7 +30,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
     /**
-     * Checks if an email is already associate with a user
+     * Checks if an email is already associate with an user
      *
      * @param email
      * @return Boolean
@@ -68,7 +68,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
     /**
-     * Disconnects a user and removes is associated token
+     * Disconnects an user and removes is associated token
      *
      * @param token token of user to be disconnect
      */
@@ -84,9 +84,9 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
     /**
-     * Updates a user data
+     * Updates user data
      *
-     * @param user a user
+     * @param user an user
      * @return UpdateResults
      */
     public UpdateResults updateUser(User user) {
@@ -130,7 +130,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     /**
      * Removes an enemy
      *
-     * @param user     a user
+     * @param user     an user
      * @param username username of enemy to be removed
      */
     public void deleteEnemy(User user, User username) {

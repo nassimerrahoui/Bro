@@ -1,9 +1,11 @@
 package com.bro.app;
 
 
+import com.bro.dao.BrotherhoodDAO;
 import com.bro.dao.GeolocationDAO;
 import com.bro.entity.Geolocation;
 import com.bro.entity.User;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.mongodb.morphia.Key;
 
@@ -21,6 +23,7 @@ import java.util.List;
 public class GeolocationService {
 
     private GeolocationDAO geolocationDAO = new GeolocationDAO(BroApp.getDatastore());
+    private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
 
     /**
      * Creates a Geolocation into database
@@ -38,39 +41,45 @@ public class GeolocationService {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    // TODO : A TESTER
-
     /**
-     * Returns a history of 100 last GPS locations
+     * Returns a history of n last known GPS locations
      *
-     * @param token a user token
+     * @param token an user token
      * @return Response HTTP Status
      */
     @GET
-    @Path("/{token}/history")
-    public Response getLocationHistory(@PathParam("token") String token) {
+    @Path("/{token}/history/{nbGeo}")
+    public Response getLocationHistory(@PathParam("token") String token, @PathParam("nbGeo") int nbGeo) {
 
-        List<Geolocation> history = geolocationDAO.getLastLocation(token);
+        List<Geolocation> history = geolocationDAO.getNLastLocations(token, nbGeo);
 
-        if (!history.isEmpty()) {
-            return Response.status(Response.Status.OK).entity(history).build();
+        if (history.isEmpty()) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        return Response.status(Response.Status.NO_CONTENT).build();
+        JsonArray array = new JsonArray();
+        for (Geolocation geolocation: history) {
+            JsonObject tokenJSON = new JsonObject();
+            array.add(tokenJSON);
+            tokenJSON.addProperty("user", geolocation.getUser().getUsername());
+            tokenJSON.addProperty("lng", geolocation.getLng());
+            tokenJSON.addProperty("lat", geolocation.getLat());
+            tokenJSON.addProperty("timestamp", geolocation.getId().getTimestamp());
+        }
+        return Response.status(Response.Status.OK).entity(array).build();
+
     }
 
 
     /**
      * Takes two users and returns GPS distance between them
      *
-     * @param bro1 a User
-     * @param bro2 a User
+     * @param users a list of User
      * @return JSON with property distance associated with GPS distance
      */
-    @GET
+    @POST
     @Path("/distance")
-    public Response getDistance(User bro1, User bro2) {
-
-        double distance = geolocationDAO.getDistance(bro1.getUsername(), bro2.getUsername());
+    public Response getDistance(List<User> users) {
+        double distance = geolocationDAO.getDistance(users.get(0).getUsername(), users.get(1).getUsername());
         System.out.println(distance);
         try {
             JsonObject tokenJSON = new JsonObject();
@@ -81,4 +90,14 @@ public class GeolocationService {
         }
 
     }
+
+
+    @GET
+    @Path("/{token}/get_friends_distance")
+    public Response getBrosDistance(@PathParam("token") String token) {
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token);
+        geolocationDAO.getBrosDistance(token, bros);
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
 }
