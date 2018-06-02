@@ -72,7 +72,6 @@ public class GeolocationService {
 
     }
 
-
     /**
      * Takes two users and returns GPS distance between them
      *

@@ -9,7 +9,6 @@ import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,29 +59,33 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
         return null;
     }
 
-
-    /**
+   /**
      * Gets brotherhood related to user associated to given token
      *
      * @param token user token
      * @param id    brotherhood id
      * @return Brotherhood or null
      */
-    public Brotherhood getBrotherhood(String token, String id) {
+    public Brotherhood getBrotherhood(User user, User bro) {
 
-        Optional<User> user = getDatastore().createQuery(User.class)
-                .field("token").equal(token)
+        Optional<User> u = getDatastore().createQuery(User.class)
+                .field("username").equal(user.getUsername())
                 .asList().stream().findAny();
 
-        if (user.isPresent()) {
-            ObjectId objectId = new ObjectId(id);
+        Optional<User> b = getDatastore().createQuery(User.class)
+                .field("username").equal(bro.getUsername())
+                .asList().stream().findAny();
+
+        if(u.isPresent() && b.isPresent()) {
             Query<Brotherhood> query_brotherhood = getDatastore().find(Brotherhood.class);
-            query_brotherhood.field("_id").equal(objectId);
-            query_brotherhood.or(
-                    query_brotherhood.criteria("sender").equal(user.get()),
-                    query_brotherhood.criteria("receiver").equal(user.get()));
-
-
+            query_brotherhood.and(
+                    query_brotherhood.or(
+                            query_brotherhood.criteria("sender").equal(u.get()),
+                            query_brotherhood.criteria("receiver").equal(u.get())),
+                    query_brotherhood.or(
+                            query_brotherhood.criteria("sender").equal(b.get()),
+                            query_brotherhood.criteria("receiver").equal(b.get()))
+            );
             return query_brotherhood.get();
         }
         return null;

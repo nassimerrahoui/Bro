@@ -4,7 +4,6 @@ import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
-
 import java.util.Date;
 import java.util.Objects;
 
@@ -28,8 +27,7 @@ public class Geolocation {
     /**
      * Empty constructor for DAO
      */
-    public Geolocation() {
-    }
+    public Geolocation(){}
 
     /**
      * @param lat
@@ -61,7 +59,6 @@ public class Geolocation {
     public void setUser(User user) {
         this.user = user;
     }
-
 
     @Override
     public boolean equals(Object o) {

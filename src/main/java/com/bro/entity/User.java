@@ -3,7 +3,6 @@ package com.bro.entity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
-
 import java.util.List;
 
 /**

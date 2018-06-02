@@ -144,5 +144,27 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .removeAll("enemies", bro);
         update(query, ops);
     }
+
+    /** Activer la geolocation **/
+    public void raising(User user) {
+
+        Query<User> query = createQuery()
+                .field("token").equal(user.getToken());
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .removeAll("isLocation", true);
+        update(query, ops);
+    }
+
+    /** Désactivé la geolocation **/
+    public void shadow(User user) {
+
+        Query<User> query = createQuery()
+                .field("token").equal(user.getToken());
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .removeAll("isLocation", false);
+        update(query, ops);
+    }
 }
 

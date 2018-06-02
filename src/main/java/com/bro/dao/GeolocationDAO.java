@@ -36,7 +36,6 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         return null;
     }
 
-
     /**
      * Takes a token and a number n and returns n last geolocations
      * associated with this user using the timestamp creation
