@@ -8,14 +8,16 @@ import com.bro.entity.Geolocation;
 import com.bro.entity.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mongodb.morphia.Key;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Manages GPS location of our bro'ths
@@ -51,8 +53,8 @@ public class GeolocationService {
      * @return Response HTTP Status
      */
     @GET
-    @Path("/{token}/history/{nbGeo}")
-    public Response getLocationHistory(@PathParam("token") String token, @PathParam("nbGeo") int nbGeo) {
+    @Path("/history")
+    public Response getLocationHistory(@HeaderParam("token") String token, @HeaderParam("nbGeo") int nbGeo) {
 
         List<Geolocation> history = geolocationDAO.getNLastLocations(token, nbGeo);
 
@@ -60,7 +62,7 @@ public class GeolocationService {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
         JsonArray array = new JsonArray();
-        for (Geolocation geolocation: history) {
+        for (Geolocation geolocation : history) {
             JsonObject tokenJSON = new JsonObject();
             array.add(tokenJSON);
             tokenJSON.addProperty("user", geolocation.getUser().getUsername());
@@ -94,14 +96,52 @@ public class GeolocationService {
     }
 
 
+    /**
+     * Returns distance in km for each bro
+     *
+     * @param token
+     * @return JSON with property distance associated with GPS distance for each bro
+     */
     @GET
-    @Path("/{token}/get_friends_distance")
-    public Response getBrosDistance(@PathParam("token") String token) {
+    @Path("/get_bros_distance")
+    public Response getBrosDistance(@HeaderParam("token") String token) {
         List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
         HashMap<String, Double> distance = geolocationDAO.getBrosDistance(token, bros);
         String resp = new Gson().toJson(distance);
-        if(!distance.isEmpty()){
+        if (!distance.isEmpty()) {
             return Response.status(Response.Status.OK).entity(resp).build();
+        }
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+
+    @GET
+    @Path("/get_bro_locations")
+    public Response getBrosPositions(@HeaderParam("token") String token) {
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        HashMap<String, Geolocation> locations = geolocationDAO.getBrosPositions(token, bros);
+        //String resp = new Gson().toJson(locations);
+
+        System.out.println(locations);
+
+
+        Collection<JSONObject> items = new ArrayList<JSONObject>();
+        for (Map.Entry location : locations.entrySet()) {
+            Geolocation geo = (Geolocation) location.getValue();
+
+            JSONObject jsonO = new JSONObject();
+            jsonO.put("username", location.getKey().toString());
+            jsonO.put("isGeolocalizable", geo.getUser().isLocalizable());
+
+            jsonO.put("Position", new JSONObject()
+                    .put("lat", Double.toString(geo.getLat()))
+                    .put("lng", Double.toString(geo.getLng())));
+            items.add(jsonO);
+        }
+
+
+        if (!locations.isEmpty()) {
+            return Response.status(Response.Status.OK).entity(items).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }

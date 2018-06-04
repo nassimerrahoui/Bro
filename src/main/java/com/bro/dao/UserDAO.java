@@ -145,7 +145,11 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         update(query, ops);
     }
 
-    /** Activer la geolocation **/
+    /**
+     * Enables localization
+     *
+     * @param user an user
+     */
     public void raising(User user) {
 
         Query<User> query = createQuery()
@@ -156,7 +160,11 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         update(query, ops);
     }
 
-    /** Désactivé la geolocation **/
+    /**
+     * Disables localization
+     *
+     * @param user an user
+     */
     public void shadow(User user) {
 
         Query<User> query = createQuery()

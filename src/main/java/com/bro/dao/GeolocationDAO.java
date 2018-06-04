@@ -125,8 +125,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      *
      * @param token a token of an user
      * @param bros  a list of broship
-     * @return HashMap<String                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Double> key: bro username, value: distance from main user.
-     * @TODO: corriger le bug des isLocalizable() toujours à false
+     * @return HashMap<String ,   Double>
      */
     public HashMap<String, Double> getBrosDistance(String token, List<User> bros) {
 
@@ -146,6 +145,30 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
             }
         }
         return mapDistance;
+    }
+
+
+    /**
+     * Takes an user and his bros. Then calculates distance in km
+     * between each of them who activated isLocalizable option.
+     *
+     * @param token a token of an user
+     * @param bros  a list of broship
+     */
+    public HashMap<String, Geolocation> getBrosPositions(String token, List<User> bros) {
+        HashMap<String, Geolocation> mapPositions = new HashMap<String, Geolocation>();
+        Optional<User> userQuery = getDatastore().createQuery(User.class)
+                .field("token").equal(token)
+                .asList().stream().findAny();
+
+        if (userQuery.isPresent()) {
+            for (User bro : bros) {
+                if (!bro.getToken().equals("")) {
+                    mapPositions.put(bro.getUsername(), getLastLocation(bro.getToken()));
+                }
+            }
+        }
+        return mapPositions;
     }
 
 

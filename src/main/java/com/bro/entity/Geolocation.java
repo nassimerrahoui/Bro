@@ -5,6 +5,7 @@ import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -12,7 +13,6 @@ import java.util.Objects;
  * Represent a GPS position for an user at a given time
  */
 @Entity("geolocation")
-@Embedded
 public class Geolocation {
 
     @Id
@@ -22,13 +22,14 @@ public class Geolocation {
 
     private double lng;
 
-    @Reference(idOnly = true, lazy = true)
+    @Reference
     private User user;
 
     /**
      * Empty constructor for DAO
      */
-    public Geolocation(){}
+    public Geolocation() {
+    }
 
     /**
      * @param lat

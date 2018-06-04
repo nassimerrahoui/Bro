@@ -3,13 +3,14 @@ package com.bro.app;
 import com.bro.dao.BrotherhoodDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class BrotherhoodService {
      */
     @POST
     @Path("/create")
-    public Response create(List<User> users){
+    public Response create(List<User> users) {
 
         User sender = users.get(0);
         User receiver = users.get(1);
@@ -53,21 +54,20 @@ public class BrotherhoodService {
      */
     @POST
     @Path("/accept")
-    public Response accept(List<User> users){
+    public Response accept(List<User> users) {
 
         User user = users.get(0);
         User bro = users.get(1);
         Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
 
         try {
-            if(thisBrotherhood != null){
+            if (thisBrotherhood != null) {
 
                 UpdateResults results = brotherhoodDAO.accept(thisBrotherhood);
                 return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
@@ -75,51 +75,98 @@ public class BrotherhoodService {
     /**
      * Reject a brotherhood
      *
-     * @param token an user token
-     * @param id    a brotherhood id
-     * @return Response HTTP Status
+     * @param users 2 users, first is the user who deny the second
+     * @return Results
      */
     @POST
     @Path("/deny")
-    public Response shutDown(List<User> users){
+    public Response denyBrotherhood(List<User> users) {
 
         User user = users.get(0);
         User bro = users.get(1);
         Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
 
         try {
-            if(thisBrotherhood != null){
+            if (thisBrotherhood != null) {
 
                 UpdateResults results = brotherhoodDAO.deny(thisBrotherhood);
                 return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
 
 
     /**
-     * @param token
-     * @return
-     * @TODO: La fonction ne fait pas ce qu'elle doit faire
-     * Return brotherhood list
+     * Sends the list of brotherhood with status ACCEPTED
+     *
+     * @param token a token of a user
+     * @returns brotherhood list
      */
     @GET
-    @Path("/bros")
-    public Response getBros(@HeaderParam("token") String token){
-
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token);
-
-        try{
-            if(!bros.isEmpty()){
-                return Response.ok(bros).build();
+    @Path("/accepted_bros")
+    public Response getAcceptedBrotherhood(@HeaderParam("token") String token) {
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        ArrayList<String> brosUsernames = new ArrayList<String>();
+        for (User bro : bros) {
+            brosUsernames.add(bro.getUsername());
+        }
+        try {
+            if (!bros.isEmpty()) {
+                return Response.ok(new Gson().toJson(brosUsernames)).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
-        catch (Exception e){
+    }
+
+    /**
+     * Sends the list of brotherhood with status AWAITING
+     *
+     * @param token a token of a user
+     * @returns brotherhood list
+     */
+    @GET
+    @Path("/awaiting_bros")
+    public Response getAwaitingBrotherhood(@HeaderParam("token") String token) {
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.AWAITING);
+        ArrayList<String> brosUsernames = new ArrayList<String>();
+        for (User bro : bros) {
+            brosUsernames.add(bro.getUsername());
+        }
+        try {
+            if (!bros.isEmpty()) {
+                return Response.ok(new Gson().toJson(brosUsernames)).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+    }
+
+    /**
+     * Sends the list of brotherhood with status DENIED
+     *
+     * @param token a token of a user
+     * @Returns JSON
+     */
+    @GET
+    @Path("/denied_bros")
+    public Response getDeniedBros(@HeaderParam("token") String token) {
+        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.DENIED);
+        ArrayList<String> brosUsernames = new ArrayList<String>();
+        for (User bro : bros) {
+            brosUsernames.add(bro.getUsername());
+        }
+        try {
+            if (!bros.isEmpty()) {
+                return Response.ok(new Gson().toJson(brosUsernames)).build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
