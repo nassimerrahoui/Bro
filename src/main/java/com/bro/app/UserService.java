@@ -147,21 +147,24 @@ public class UserService {
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-
-    // TODO : A TESTER
-    /** Bloquer un ennemi **/
+    /**
+     * Add an enemy
+     *
+     * @param token token of user 1
+     * @param username username of user 2
+     * @return
+     */
     @POST
     @Path("/enemies/add")
-    public Response addEnemy(@HeaderParam("token") String token, User username) {
+    public Response addEnemy(@HeaderParam("token") String token, @HeaderParam("username") String username) {
         Optional<User> user = userDAO.getUser(token);
-        if(user.isPresent()) {
-            userDAO.addEnemy(user.get(), username);
+        Optional<User> enemy = userDAO.getUserByUsername(username);
+        if(user.isPresent() && enemy.isPresent()) {
+            userDAO.addEnemy(user.get(), enemy.get());
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-    // TODO : A TESTER
 
     /**
      * Removes an enemy
@@ -171,11 +174,12 @@ public class UserService {
      * @return Response HTTP Status
      */
     @POST
-    @Path("/enemies/delete")
-    public Response deleteEnemy(@HeaderParam("token") String token, User username) {
+    @Path("/enemies/remove")
+    public Response removeEnemy(@HeaderParam("token") String token, @HeaderParam("username") String username) {
         Optional<User> user = userDAO.getUser(token);
-        if(user.isPresent()) {
-            userDAO.deleteEnemy(user.get(), username);
+        Optional<User> enemy = userDAO.getUserByUsername(username);
+        if(user.isPresent() && enemy.isPresent()) {
+            userDAO.removeEnemy(user.get(), enemy.get());
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();

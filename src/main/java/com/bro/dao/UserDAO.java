@@ -133,41 +133,43 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     /**
      * Add a enemy relationship and removes brotherhood if it exists
      *
-     * @param user
-     * @param username
+     * @param user user who add enemy
+     * @param enemy user to be add to enemy list
      */
-    public void addEnemy(User user, User username) {
+    public void addEnemy(User user, User enemy) {
 
-        Query<User> query = createQuery()
-                .field("token").equal(user.getToken());
-        User enemy = createQuery()
-                .field("username").equal(username.getUsername()).get();
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .push("enemies", enemy);
-        update(query, ops);
+        boolean enemyDoesntExists = getDatastore().find(User.class)
+                .field("enemies").equal(enemy).asList().isEmpty();
 
-        Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
-                .field("sender").equal(user)
-                .field("receiver").equal(enemy);
-        getDatastore().delete(bromance);
+        if (enemyDoesntExists){
+            Query<User> query = createQuery()
+                    .field("token").equal(user.getToken());
+
+            UpdateOperations<User> ops = getDatastore()
+                    .createUpdateOperations(User.class)
+                    .push("enemies", enemy);
+            update(query, ops);
+
+            Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
+                    .field("sender").equal(user)
+                    .field("receiver").equal(enemy);
+            getDatastore().delete(bromance);
+        }
     }
 
     /**
      * Removes an enemy
      *
      * @param user     an user
-     * @param username username of enemy to be removed
+     * @param enemy username of enemy to be removed
      */
-    public void deleteEnemy(User user, User username) {
+    public void removeEnemy(User user, User enemy) {
 
         Query<User> query = createQuery()
                 .field("token").equal(user.getToken());
-        User bro = createQuery()
-                .field("username").equal(username.getUsername()).get();
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .removeAll("enemies", bro);
+                .removeAll("enemies", enemy);
         update(query, ops);
     }
 

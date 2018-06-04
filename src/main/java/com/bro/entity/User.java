@@ -29,6 +29,7 @@ public class User {
 
     private Boolean localizable;
 
+    @Reference
     private List<User> enemies;
 
     /**
