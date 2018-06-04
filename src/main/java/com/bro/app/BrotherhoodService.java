@@ -47,7 +47,7 @@ public class BrotherhoodService {
     /**
      * Accepts a brotherhood
      *
-     * @param users 2 users, first is the user who accept the second
+     * @return Response HTTP status
      */
     @POST
     @Path("/accept")
@@ -110,14 +110,7 @@ public class BrotherhoodService {
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());
         }
-        try {
-            if (!bros.isEmpty()) {
-                return Response.ok(new Gson().toJson(brosUsernames)).build();
-            }
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+        return getResponseBros(bros, brosUsernames);
     }
 
     /**
@@ -134,14 +127,7 @@ public class BrotherhoodService {
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());
         }
-        try {
-            if (!bros.isEmpty()) {
-                return Response.ok(new Gson().toJson(brosUsernames)).build();
-            }
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+        return getResponseBros(bros, brosUsernames);
     }
 
     /**
@@ -158,6 +144,10 @@ public class BrotherhoodService {
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());
         }
+        return getResponseBros(bros, brosUsernames);
+    }
+
+    private Response getResponseBros(List<User> bros, ArrayList<String> brosUsernames) {
         try {
             if (!bros.isEmpty()) {
                 return Response.ok(new Gson().toJson(brosUsernames)).build();
