@@ -42,13 +42,13 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * Takes a token and a number n and returns n last geolocations
      * associated with this user using the timestamp creation
      *
-     * @param token a token
+     * @param username a username
      * @param nbGeo number of geolocation to be returned
      * @return List<Geolocation>
      */
-    public List<Geolocation> getNLastLocations(String token, int nbGeo) {
+    public List<Geolocation> getNLastLocations(String username, int nbGeo) {
         Optional<User> userQuery = getDatastore().createQuery(User.class)
-                .field("token").equal(token)
+                .field("username").equal(username)
                 .asList().stream().findAny();
 
         if (!userQuery.isPresent()) {
@@ -63,11 +63,11 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
     /**
      * Gets last known location for a given user through his token
      *
-     * @param token
+     * @param username a username
      * @return Geolocation
      */
-    public Geolocation getLastLocation(String token) {
-        return this.getNLastLocations(token, 1).get(0);
+    public Geolocation getLastLocation(String username) {
+        return this.getNLastLocations(username, 1).get(0);
     }
 
 
@@ -79,33 +79,24 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @return double distance or NaN
      */
     public Double getDistance(String username, String username2) {
-        Optional<User> userQuery = getDatastore().createQuery(User.class)
-                .field("username").equal(username)
-                .asList().stream().findAny();
+        Geolocation geo = getLastLocation(username);
+        Geolocation geo2 = getLastLocation(username2);
 
-        Optional<User> user2Query = getDatastore().createQuery(User.class)
-                .field("username").equal(username2)
-                .asList().stream().findAny();
-
-        if (userQuery.isPresent() && user2Query.isPresent()) {
-
-            Geolocation geo = getLastLocation(userQuery.get().getToken());
-            Geolocation geo2 = getLastLocation(user2Query.get().getToken());
-
-            double latUser = (geo.getLat() * Math.PI / 180);
-            double lngUser = (geo.getLng() * Math.PI / 180);
-            double latUser2 = (geo2.getLat() * Math.PI / 180);
-            double lngUser2 = (geo2.getLng() * Math.PI / 180);
-            double dlong = (lngUser2 - lngUser);
-            double dlat = (latUser2 - latUser);
-
-            // formule Haversine:
-            int R = 6371;
-            double a = (Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(latUser) * Math.cos(latUser2) * Math.sin(dlong / 2) * Math.sin(dlong / 2));
-            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+        if (geo == null || geo2 == null){
+            return null;
         }
-        return null;
+        double latUser = (geo.getLat() * Math.PI / 180);
+        double lngUser = (geo.getLng() * Math.PI / 180);
+        double latUser2 = (geo2.getLat() * Math.PI / 180);
+        double lngUser2 = (geo2.getLng() * Math.PI / 180);
+        double dlong = (lngUser2 - lngUser);
+        double dlat = (latUser2 - latUser);
+
+        // formule Haversine:
+        int R = 6371;
+        double a = (Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(latUser) * Math.cos(latUser2) * Math.sin(dlong / 2) * Math.sin(dlong / 2));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     /**
@@ -152,7 +143,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
         if (userQuery.isPresent()) {
             for (User bro : bros) {
-                mapPositions.put(bro.getUsername(), getLastLocation(bro.getToken()));
+                mapPositions.put(bro.getUsername(), getLastLocation(bro.getUsername()));
             }
         }
         return mapPositions;

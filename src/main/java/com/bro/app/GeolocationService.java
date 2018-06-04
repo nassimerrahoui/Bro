@@ -49,14 +49,14 @@ public class GeolocationService {
     /**
      * Returns a history of n last known GPS locations
      *
-     * @param token an user token
+     * @param username an user token
      * @return Response HTTP Status
      */
     @GET
     @Path("/history")
-    public Response getLocationHistory(@HeaderParam("token") String token, @HeaderParam("nbGeo") int nbGeo) {
+    public Response getLocationHistory(@HeaderParam("username") String username, @HeaderParam("nbGeo") int nbGeo) {
 
-        List<Geolocation> history = geolocationDAO.getNLastLocations(token, nbGeo);
+        List<Geolocation> history = geolocationDAO.getNLastLocations(username, nbGeo);
 
         if (history.isEmpty()) {
             return Response.status(Response.Status.NO_CONTENT).build();
