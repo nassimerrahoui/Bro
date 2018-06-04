@@ -32,21 +32,10 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .asList().stream().findAny();
         if (user.isPresent()) {
             Key<Geolocation> key = save(geo);
-            updateLastLocation(geo, user.get());
+            geo.setUser(user.get());
             return key;
         }
         return null;
-    }
-
-    private void updateLastLocation(Geolocation geo, User user) {
-        Query<User> userQuery = getDatastore().createQuery(User.class)
-                .field("username").equal(user.getUsername());
-
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .set("position", geo);
-
-        getDatastore().update(userQuery.getKey(), ops);
     }
 
     /**
@@ -163,9 +152,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
         if (userQuery.isPresent()) {
             for (User bro : bros) {
-                if (!bro.getToken().equals("")) {
-                    mapPositions.put(bro.getUsername(), getLastLocation(bro.getToken()));
-                }
+                mapPositions.put(bro.getUsername(), getLastLocation(bro.getToken()));
             }
         }
         return mapPositions;

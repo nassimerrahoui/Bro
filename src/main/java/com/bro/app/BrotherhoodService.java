@@ -47,10 +47,7 @@ public class BrotherhoodService {
     /**
      * Accepts a brotherhood
      *
-     * @param token token of user
-     * @param id    id of brotherhood
-     * @return Response HTTP status
-     * @TODO : À Tester (ID)
+     * @param users 2 users, first is the user who accept the second
      */
     @POST
     @Path("/accept")

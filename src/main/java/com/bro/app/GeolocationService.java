@@ -120,10 +120,6 @@ public class GeolocationService {
     public Response getBrosPositions(@HeaderParam("token") String token) {
         List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
         HashMap<String, Geolocation> locations = geolocationDAO.getBrosPositions(token, bros);
-        //String resp = new Gson().toJson(locations);
-
-        System.out.println(locations);
-
 
         Collection<JSONObject> items = new ArrayList<JSONObject>();
         for (Map.Entry location : locations.entrySet()) {
@@ -131,11 +127,11 @@ public class GeolocationService {
 
             JSONObject jsonO = new JSONObject();
             jsonO.put("username", location.getKey().toString());
-            jsonO.put("isGeolocalizable", geo.getUser().isLocalizable());
+            jsonO.put("localizable", geo.getUser().isLocalizable());
 
-            jsonO.put("Position", new JSONObject()
-                    .put("lat", Double.toString(geo.getLat()))
-                    .put("lng", Double.toString(geo.getLng())));
+            jsonO.put("position", new JSONObject()
+                    .put("lat", geo.getLat())
+                    .put("lng", geo.getLng()));
             items.add(jsonO);
         }
 

@@ -30,6 +30,31 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     }
 
     /**
+     * Gets an user with a given username
+     *
+     * @param username username associated to targeted user
+     * @return User
+     */
+    public Optional<User> getUserByUsername(String username) {
+        return createQuery()
+                .field("username").equal(username)
+                .asList().stream().findAny();
+    }
+
+    /**
+     * Gets an user with a given email
+     *
+     * @param email email associated to targeted user
+     * @return User
+     */
+    public Optional<User> getUserByEmail(String email) {
+        return createQuery()
+                .field("email").equal(email)
+                .asList().stream().findAny();
+    }
+
+
+    /**
      * Checks if an email is already associate with an user
      *
      * @param email
@@ -43,17 +68,18 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
 
 
     /**
-     * Generates and sets a token if given email is associated to given encrypted password
+     * Generates and sets a token if given email or username is associated to given encrypted password
      *
-     * @param email    email of user
-     * @param password encrypted password
+     * @param emailOrUsername email of user
+     * @param password        encrypted password
      * @return generated token or empty string
      */
-    public String authenticate(String email, String password) {
-        Query<User> query = createQuery().
-                field("email").equal(email).
-                field("password").equal(password);
-
+    public String authenticate(String emailOrUsername, String password) {
+        Query<User> query = createQuery().field("password").equal(password);
+        query.or(
+                query.criteria("email").equal(emailOrUsername),
+                query.criteria("username").equal(emailOrUsername)
+        );
         Boolean passed = !query.asList().isEmpty();
 
         if (passed) {
