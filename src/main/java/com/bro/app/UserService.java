@@ -125,9 +125,15 @@ public class UserService {
     }
 
     // TODO : A TESTER
-    /** Liste des bro devenu des enemies**/
+
+    /**
+     *  get all enemies
+     *
+     * @param token
+     * @return JSON List
+     */
     @GET
-    @Path("/{token}/enemies")
+    @Path("/enemies")
     public Response getEnemies(@HeaderParam("token") String token) {
 
         Optional<User> user = userDAO.getUser(token);

@@ -1,12 +1,10 @@
 package com.bro.entity;
 
-import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Entity;
 import org.bson.types.ObjectId;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
