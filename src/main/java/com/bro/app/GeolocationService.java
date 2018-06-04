@@ -135,11 +135,10 @@ public class GeolocationService {
             items.add(jsonO);
         }
 
-
-        if (!locations.isEmpty()) {
+        if (!bros.isEmpty()) {
             return Response.status(Response.Status.OK).entity(items).build();
         }
-        return Response.status(Response.Status.FORBIDDEN).build();
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
 }

@@ -31,11 +31,21 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
                 .field("username").equal(geo.getUser().getUsername())
                 .asList().stream().findAny();
         if (user.isPresent()) {
-            Key<Geolocation> key = save(geo);
             geo.setUser(user.get());
-            return key;
+            return save(geo);
         }
         return null;
+    }
+
+    private void updateLastLocation(Geolocation geo, User user) {
+        Query<User> userQuery = getDatastore().createQuery(User.class)
+                .field("username").equal(user.getUsername());
+
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .set("position", geo);
+
+        getDatastore().update(userQuery.getKey(), ops);
     }
 
     /**
