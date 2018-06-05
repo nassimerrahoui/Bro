@@ -119,7 +119,7 @@ public class UserService {
      */
     @PUT
     @Path("/settings")
-    public Response updateUser(User user){
+    public Response updateUser(@HeaderParam("token") String token, User user){
 
         Boolean updated = userDAO.updateUser(user).getUpdatedCount() > 0;
 
