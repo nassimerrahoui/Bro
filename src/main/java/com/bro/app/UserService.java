@@ -49,7 +49,6 @@ public class UserService {
     }
 
     /**
-     * @TODO pouvoir tester avec le username aussi
      * Connects an user calling authenticate method
      * @param user a user
      * @return JSONified token
@@ -112,8 +111,12 @@ public class UserService {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    // TODO : A TESTER
-    /** Mettre à jours les informations de ton compte **/
+    /**
+     * Updates information related to an user
+     *
+     * @param user an user
+     * @return HTTP Status
+     */
     @PUT
     @Path("/settings")
     public Response updateUser(User user){
@@ -195,8 +198,8 @@ public class UserService {
     @Path("/lightside")
     public Response lightSide(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
-        if(user.isPresent()) {
-            userDAO.raising(user.get());
+        boolean updatedRows = userDAO.raising(user.get()).getUpdatedCount() > 0;
+        if(updatedRows){
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
@@ -212,8 +215,8 @@ public class UserService {
     @Path("/darkside")
     public Response darkSide(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
-        if(user.isPresent()) {
-            userDAO.shadow(user.get());
+        boolean updatedRows = userDAO.shadow(user.get()).getUpdatedCount() > 0;
+        if(updatedRows){
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();

@@ -128,6 +128,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .set("lastName", user.getLastName())
                 .set("email", user.getEmail())
                 .set("password", user.getPassword());
+        query.get().encrypt();
         return update(query, ops);
     }
 
