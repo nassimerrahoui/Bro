@@ -121,7 +121,7 @@ public class UserService {
     @Path("/settings")
     public Response updateUser(@HeaderParam("token") String token, User user){
 
-        Boolean updated = userDAO.updateUser(user).getUpdatedCount() > 0;
+        Boolean updated = userDAO.updateUser(token, user).getUpdatedCount() > 0;
 
         if(updated){
             return Response.status(Response.Status.OK).build();

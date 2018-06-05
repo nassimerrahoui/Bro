@@ -116,10 +116,10 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
      * @param user an user
      * @return UpdateResults
      */
-    public UpdateResults updateUser(User user) {
+    public UpdateResults updateUser(String token, User user) {
 
         Query<User> query = createQuery()
-                .field("token").equal(user.getToken());
+                .field("token").equal(token);
 
         if(user.getPassword() != null) {
             UpdateOperations<User> ops = getDatastore()
