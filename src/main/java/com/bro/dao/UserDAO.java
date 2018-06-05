@@ -121,15 +121,29 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         Query<User> query = createQuery()
                 .field("token").equal(user.getToken());
 
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .set("username", user.getUsername())
-                .set("firstName", user.getFirstName())
-                .set("lastName", user.getLastName())
-                .set("email", user.getEmail())
-                .set("password", user.getPassword());
-        query.get().encrypt();
-        return update(query, ops);
+        if(user.getPassword() != null) {
+            UpdateOperations<User> ops = getDatastore()
+                    .createUpdateOperations(User.class)
+                    .set("username", user.getUsername())
+                    .set("firstName", user.getFirstName())
+                    .set("lastName", user.getLastName())
+                    .set("email", user.getEmail())
+                    .set("password", user.getPassword())
+                    .set("localizable", user.isLocalizable());
+            query.get().encrypt();
+            return update(query, ops);
+        }
+        else {
+            UpdateOperations<User> ops = getDatastore()
+                    .createUpdateOperations(User.class)
+                    .set("username", user.getUsername())
+                    .set("firstName", user.getFirstName())
+                    .set("lastName", user.getLastName())
+                    .set("email", user.getEmail())
+                    .set("localizable", user.isLocalizable());
+            query.get().encrypt();
+            return update(query, ops);
+        }
     }
 
     /**
@@ -181,34 +195,6 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
                 .removeAll("enemies", enemy.get());
-        return update(query, ops);
-    }
-
-
-    /**
-     * Enables localization
-     *
-     * @param user an user
-     */
-    public UpdateResults raising(User user) {
-        return this._updateLocalizable(user, true);
-    }
-
-    /**
-     * Disables localization
-     *
-     * @param user an user
-     */
-    public UpdateResults shadow(User user) {
-        return this._updateLocalizable(user, false);
-    }
-
-    public UpdateResults _updateLocalizable(User user, boolean value){
-        Query<User> query = createQuery()
-                .field("token").equal(user.getToken());
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .set("localizable", value);
         return update(query, ops);
     }
 }

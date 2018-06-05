@@ -186,39 +186,4 @@ public class UserService {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
-    /**
-     * Enables geolocation
-     *
-     * @param token a string representing an user
-     * @return HTTP Status
-     */
-    @POST
-    @Path("/lightside")
-    public Response lightSide(@HeaderParam("token") String token) {
-        Optional<User> user = userDAO.getUser(token);
-        boolean updatedRows = userDAO.raising(user.get()).getUpdatedCount() > 0;
-        if(updatedRows){
-            return Response.status(Response.Status.OK).build();
-        }
-        return  Response.status(Response.Status.BAD_REQUEST).build();
-    }
-
-    /**
-     * Disables geolocation
-     *
-     * @param token a string representing an user
-     * @return HTTP Status
-    */
-    @POST
-    @Path("/darkside")
-    public Response darkSide(@HeaderParam("token") String token) {
-        Optional<User> user = userDAO.getUser(token);
-        boolean updatedRows = userDAO.shadow(user.get()).getUpdatedCount() > 0;
-        if(updatedRows){
-            return Response.status(Response.Status.OK).build();
-        }
-        return  Response.status(Response.Status.BAD_REQUEST).build();
-    }
 }
