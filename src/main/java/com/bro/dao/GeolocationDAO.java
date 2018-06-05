@@ -26,26 +26,15 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @param geo Geolocation object
      * @return Key<T> statement or null
      */
-    public Key<Geolocation> create(Geolocation geo) {
+    public Key<Geolocation> create(Geolocation geo, String token) {
         Optional<User> user = getDatastore().createQuery(User.class)
-                .field("token").equal(geo.getUser().getToken())
+                .field("token").equal(token)
                 .asList().stream().findAny();
         if (user.isPresent()) {
             geo.setUser(user.get());
             return save(geo);
         }
         return null;
-    }
-
-    private void updateLastLocation(Geolocation geo, User user) {
-        Query<User> userQuery = getDatastore().createQuery(User.class)
-                .field("username").equal(user.getUsername());
-
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .set("position", geo);
-
-        getDatastore().update(userQuery.getKey(), ops);
     }
 
     /**

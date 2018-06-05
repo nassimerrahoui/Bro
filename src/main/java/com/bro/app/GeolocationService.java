@@ -38,8 +38,8 @@ public class GeolocationService {
      */
     @POST
     @Path("/create")
-    public Response create(Geolocation geolocation) {
-        Key<Geolocation> key = geolocationDAO.create(geolocation);
+    public Response create(Geolocation geolocation, @HeaderParam("token") String token) {
+        Key<Geolocation> key = geolocationDAO.create(geolocation, token);
         if (key == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

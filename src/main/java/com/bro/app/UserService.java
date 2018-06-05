@@ -185,8 +185,12 @@ public class UserService {
     }
 
 
-    // TODO : A TESTER
-    /** Activer la geolocation **/
+    /**
+     * Enables geolocation
+     *
+     * @param token a string representing an user
+     * @return HTTP Status
+     */
     @POST
     @Path("/lightside")
     public Response lightSide(@HeaderParam("token") String token) {
@@ -198,8 +202,12 @@ public class UserService {
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    // TODO : A TESTER
-    /** Désactiver la geolocation **/
+    /**
+     * Disables geolocation
+     *
+     * @param token a string representing an user
+     * @return HTTP Status
+    */
     @POST
     @Path("/darkside")
     public Response darkSide(@HeaderParam("token") String token) {

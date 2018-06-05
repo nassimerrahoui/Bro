@@ -189,14 +189,8 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
      *
      * @param user an user
      */
-    public void raising(User user) {
-
-        Query<User> query = createQuery()
-                .field("token").equal(user.getToken());
-        UpdateOperations<User> ops = getDatastore()
-                .createUpdateOperations(User.class)
-                .removeAll("isLocation", true);
-        update(query, ops);
+    public UpdateResults raising(User user) {
+        return this._updateLocalizable(user, true);
     }
 
     /**
@@ -204,14 +198,17 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
      *
      * @param user an user
      */
-    public void shadow(User user) {
+    public UpdateResults shadow(User user) {
+        return this._updateLocalizable(user, false);
+    }
 
+    public UpdateResults _updateLocalizable(User user, boolean value){
         Query<User> query = createQuery()
                 .field("token").equal(user.getToken());
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .removeAll("isLocation", false);
-        update(query, ops);
+                .set("localizable", value);
+        return update(query, ops);
     }
 }
 
