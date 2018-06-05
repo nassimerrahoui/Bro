@@ -6,7 +6,6 @@ import com.bro.entity.User;
 import com.google.gson.Gson;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -86,8 +85,8 @@ public class BrotherhoodService {
         try {
             if (thisBrotherhood != null) {
 
-                UpdateResults results = brotherhoodDAO.deny(thisBrotherhood);
-                return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
+                brotherhoodDAO.deny(thisBrotherhood);
+                return Response.status(Response.Status.OK).build();
             }
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (Exception e) {
@@ -123,23 +122,6 @@ public class BrotherhoodService {
     @Path("/awaiting_bros")
     public Response getAwaitingBrotherhood(@HeaderParam("token") String token) {
         List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.AWAITING);
-        ArrayList<String> brosUsernames = new ArrayList<String>();
-        for (User bro : bros) {
-            brosUsernames.add(bro.getUsername());
-        }
-        return getResponseBros(bros, brosUsernames);
-    }
-
-    /**
-     * Sends the list of brotherhood with status DENIED
-     *
-     * @param token a token of a user
-     * @Returns JSON
-     */
-    @GET
-    @Path("/denied_bros")
-    public Response getDeniedBros(@HeaderParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.DENIED);
         ArrayList<String> brosUsernames = new ArrayList<String>();
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());

@@ -18,7 +18,6 @@ public class Brotherhood {
 
     public enum Brolationship {
         ACCEPTED,
-        DENIED,
         AWAITING
     }
 

@@ -2,6 +2,8 @@ package com.bro.dao;
 
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
+import com.mongodb.WriteConcern;
+import com.mongodb.WriteResult;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
@@ -113,14 +115,12 @@ public class BrotherhoodDAO extends BasicDAO<Brotherhood, ObjectId> {
      * @param brotherhood a brotherhood
      * @return UpdateResults
      */
-    public UpdateResults deny(Brotherhood brotherhood) {
+    public void deny(Brotherhood brotherhood) {
         Query<Brotherhood> query = getDatastore().find(Brotherhood.class);
         query.field("_id").equal(brotherhood.getId());
 
-        UpdateOperations<Brotherhood> ops = getDatastore()
-                .createUpdateOperations(Brotherhood.class)
-                .set("brolationship", Brotherhood.Brolationship.DENIED);
-        return update(query, ops);
+        WriteResult ops = getDatastore().delete(query);
+        deleteByQuery(query);
     }
 
     /**
