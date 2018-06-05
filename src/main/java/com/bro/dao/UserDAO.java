@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
+import com.mongodb.WriteResult;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.dao.BasicDAO;
@@ -133,45 +134,55 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
     /**
      * Add a enemy relationship and removes brotherhood if it exists
      *
-     * @param user user who add enemy
-     * @param enemy user to be add to enemy list
+     * @param token    token of user who add a new enemy
+     * @param username user to be add to enemy list
      */
-    public void addEnemy(User user, User enemy) {
-
-        boolean enemyDoesntExists = getDatastore().find(User.class)
-                .field("enemies").equal(enemy).asList().isEmpty();
-
-        if (enemyDoesntExists){
-            Query<User> query = createQuery()
-                    .field("token").equal(user.getToken());
-
-            UpdateOperations<User> ops = getDatastore()
-                    .createUpdateOperations(User.class)
-                    .push("enemies", enemy);
-            update(query, ops);
-
-            Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
-                    .field("sender").equal(user)
-                    .field("receiver").equal(enemy);
-            getDatastore().delete(bromance);
+    public WriteResult addEnemy(String token, String username) {
+        Optional<User> user = getUser(token);
+        Optional<User> enemy = getUserByUsername(username);
+        if (!user.isPresent()
+                || !enemy.isPresent()
+                || !getDatastore().find(User.class)
+                .field("enemies").equal(enemy.get()).asList().isEmpty()
+                ) {
+            System.out.println("null");
+            return null;
         }
+        Query<User> query = createQuery()
+                .field("token").equal(token);
+
+        UpdateOperations<User> ops = getDatastore()
+                .createUpdateOperations(User.class)
+                .push("enemies", enemy.get());
+        update(query, ops);
+
+        Query<Brotherhood> bromance = getDatastore().createQuery(Brotherhood.class)
+                .field("sender").equal(user.get())
+                .field("receiver").equal(enemy.get());
+        WriteResult result = getDatastore().delete(bromance);
+        return result;
     }
 
     /**
      * Removes an enemy
      *
-     * @param user     an user
-     * @param enemy username of enemy to be removed
+     * @param token    an user
+     * @param username username of enemy to be removed
      */
-    public void removeEnemy(User user, User enemy) {
-
+    public UpdateResults removeEnemy(String token, String username) {
+        Optional<User> user = getUser(token);
+        Optional<User> enemy = getUserByUsername(username);
+        if (!(user.isPresent() && enemy.isPresent())) {
+            return null;
+        }
         Query<User> query = createQuery()
-                .field("token").equal(user.getToken());
+                .field("token").equal(token);
         UpdateOperations<User> ops = getDatastore()
                 .createUpdateOperations(User.class)
-                .removeAll("enemies", enemy);
-        update(query, ops);
+                .removeAll("enemies", enemy.get());
+        return update(query, ops);
     }
+
 
     /**
      * Enables localization

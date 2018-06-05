@@ -28,7 +28,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      */
     public Key<Geolocation> create(Geolocation geo) {
         Optional<User> user = getDatastore().createQuery(User.class)
-                .field("username").equal(geo.getUser().getUsername())
+                .field("token").equal(geo.getUser().getToken())
                 .asList().stream().findAny();
         if (user.isPresent()) {
             geo.setUser(user.get());

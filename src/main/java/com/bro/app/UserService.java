@@ -2,11 +2,13 @@ package com.bro.app;
 
 import com.bro.dao.UserDAO;
 import com.bro.entity.User;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.commons.validator.routines.EmailValidator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,8 +126,6 @@ public class UserService {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    // TODO : A TESTER
-
     /**
      *  get all enemies
      *
@@ -140,9 +140,14 @@ public class UserService {
 
         if(user.isPresent()) {
             List<User> enemies = user.get().getEnemies();
+            List<String> enemiesStr = new ArrayList<>();
+            for (User enemy:
+                 enemies) {
+                enemiesStr.add(enemy.getUsername());
+            }
             if(enemies.isEmpty())
                 return Response.status(Response.Status.NO_CONTENT).entity("No enemy").build();
-            return Response.status(Response.Status.OK).entity(enemies).build();
+            return Response.status(Response.Status.OK).entity(new Gson().toJson(enemiesStr)).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -157,10 +162,7 @@ public class UserService {
     @POST
     @Path("/enemies/add")
     public Response addEnemy(@HeaderParam("token") String token, @HeaderParam("username") String username) {
-        Optional<User> user = userDAO.getUser(token);
-        Optional<User> enemy = userDAO.getUserByUsername(username);
-        if(user.isPresent() && enemy.isPresent()) {
-            userDAO.addEnemy(user.get(), enemy.get());
+        if(userDAO.addEnemy(token, username).isUpdateOfExisting()){
             return Response.status(Response.Status.OK).build();
         }
         return  Response.status(Response.Status.BAD_REQUEST).build();
@@ -176,14 +178,12 @@ public class UserService {
     @POST
     @Path("/enemies/remove")
     public Response removeEnemy(@HeaderParam("token") String token, @HeaderParam("username") String username) {
-        Optional<User> user = userDAO.getUser(token);
-        Optional<User> enemy = userDAO.getUserByUsername(username);
-        if(user.isPresent() && enemy.isPresent()) {
-            userDAO.removeEnemy(user.get(), enemy.get());
+        if(userDAO.removeEnemy(token, username) != null){
             return Response.status(Response.Status.OK).build();
         }
-        return  Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
 
     // TODO : A TESTER
     /** Activer la geolocation **/
