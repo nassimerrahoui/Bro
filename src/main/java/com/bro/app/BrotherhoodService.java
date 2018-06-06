@@ -25,25 +25,17 @@ public class BrotherhoodService {
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
     private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
-    /**
-     * Takes two users and create a brotherhood into database
-     *
-     * @param users a list of user
-     * @return Response HTTP status
-     */
+    
     @POST
     @Path("/create")
-    public Response create(List<User> users) {
+    public Response create(@HeaderParam("token") String token, User receiver) {
 
-        User sender = users.get(0);
-        User receiver = users.get(1);
-
-        Key<Brotherhood> key = brotherhoodDAO.create(sender, receiver);
-
-        if (key == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+        Optional<User> sender = userDAO.getUser(token);
+        if (sender.isPresent()) {
+            Key<Brotherhood> key = brotherhoodDAO.create(sender.get(), receiver);
+            return Response.status(Response.Status.CREATED).build();
         }
-        return Response.status(Response.Status.CREATED).build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     /**
@@ -53,48 +45,42 @@ public class BrotherhoodService {
      */
     @POST
     @Path("/accept")
-    public Response accept(List<User> users) {
-
-        User user = users.get(0);
-        User bro = users.get(1);
-        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
+    public Response acceptBrotherhood(@HeaderParam("token") String token, User receiver) {
 
         try {
-            if (thisBrotherhood != null) {
+            Optional<User> sender = userDAO.getUser(token);
+            if (sender.isPresent()) {
+                Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(sender.get(), receiver);
+                if (thisBrotherhood != null) {
 
-                UpdateResults results = brotherhoodDAO.accept(thisBrotherhood);
-                return Response.status(Response.Status.OK).entity(results.getUpdatedCount()).build();
+                    brotherhoodDAO.accept(thisBrotherhood);
+                    return Response.status(Response.Status.OK).build();
+                }
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
         }
+        catch (Exception e) { return Response.status(Response.Status.FORBIDDEN).build(); }
+        return Response.status(Response.Status.FORBIDDEN).build();
     }
 
-    /**
-     * Reject a brotherhood
-     *
-     * @param users 2 users, first is the user who deny the second
-     * @return Results
-     */
     @POST
     @Path("/deny")
-    public Response denyBrotherhood(List<User> users) {
-
-        User user = users.get(0);
-        User bro = users.get(1);
-        Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(user, bro);
+    public Response denyBrotherhood(@HeaderParam("token") String token, User receiver) {
 
         try {
-            if (thisBrotherhood != null) {
+            Optional<User> sender = userDAO.getUser(token);
+            if (sender.isPresent()) {
+                Brotherhood thisBrotherhood = brotherhoodDAO.getBrotherhood(sender.get(), receiver);
+                if (thisBrotherhood != null) {
 
-                brotherhoodDAO.deny(thisBrotherhood);
-                return Response.status(Response.Status.OK).build();
+                    brotherhoodDAO.deny(thisBrotherhood);
+                    return Response.status(Response.Status.OK).build();
+                }
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
         }
+        catch (Exception e) { return Response.status(Response.Status.FORBIDDEN).build(); }
+        return Response.status(Response.Status.FORBIDDEN).build();
     }
 
 
