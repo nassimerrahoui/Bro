@@ -24,7 +24,6 @@ public class BrotherhoodService {
 
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
     private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
-
     
     @POST
     @Path("/create")
