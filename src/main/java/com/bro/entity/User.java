@@ -4,6 +4,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @TODO verifier l'utilisation de l'attribut enemies qui semble être inutilisé
@@ -107,5 +108,19 @@ public class User {
 
     public String toString(){
         return this.firstName +" "+ this.lastName + " <" + this.email + "> " + this.username;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return this.email.equals(user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.email);
     }
 }

@@ -209,5 +209,6 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .removeAll("enemies", enemy.get());
         return update(query, ops);
     }
+
 }
 
