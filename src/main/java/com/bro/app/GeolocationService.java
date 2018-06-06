@@ -3,6 +3,7 @@ package com.bro.app;
 
 import com.bro.dao.BrotherhoodDAO;
 import com.bro.dao.GeolocationDAO;
+import com.bro.dao.UserDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.Geolocation;
 import com.bro.entity.User;
@@ -29,6 +30,7 @@ public class GeolocationService {
 
     private GeolocationDAO geolocationDAO = new GeolocationDAO(BroApp.getDatastore());
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
+    private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
     /**
      * Creates a Geolocation into database
@@ -105,7 +107,10 @@ public class GeolocationService {
     @GET
     @Path("/get_bros_distance")
     public Response getBrosDistance(@HeaderParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        List<User> bros = brotherhoodDAO.getBrotherhoods(
+                userDAO.getUser(token).get(),
+                Brotherhood.Brolationship.ACCEPTED
+        );
         HashMap<String, Double> distance = geolocationDAO.getBrosDistance(token, bros);
         String resp = new Gson().toJson(distance);
         if (!distance.isEmpty()) {
@@ -118,7 +123,15 @@ public class GeolocationService {
     @GET
     @Path("/get_bro_locations")
     public Response getBrosPositions(@HeaderParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        Optional<User> user = userDAO.getUser(token);
+        if (!user.isPresent()){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        List<User> bros = brotherhoodDAO.getBrotherhoods(user.get(), Brotherhood.Brolationship.ACCEPTED);
+        if (bros.isEmpty()){
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
         HashMap<String, Geolocation> locations = geolocationDAO.getBrosPositions(token, bros);
 
         Collection<JSONObject> items = new ArrayList<JSONObject>();
@@ -135,7 +148,7 @@ public class GeolocationService {
             items.add(jsonO);
         }
 
-        if (!bros.isEmpty()) {
+        if (!locations.isEmpty()) {
             return Response.status(Response.Status.OK).entity(items).build();
         }
         return Response.status(Response.Status.NO_CONTENT).build();

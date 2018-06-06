@@ -1,6 +1,7 @@
 package com.bro.app;
 
 import com.bro.dao.BrotherhoodDAO;
+import com.bro.dao.UserDAO;
 import com.bro.entity.Brotherhood;
 import com.bro.entity.User;
 import com.google.gson.Gson;
@@ -21,6 +22,7 @@ import java.util.List;
 public class BrotherhoodService {
 
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
+    private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
     /**
      * Takes two users and create a brotherhood into database
@@ -104,7 +106,8 @@ public class BrotherhoodService {
     @GET
     @Path("/accepted_bros")
     public Response getAcceptedBrotherhood(@HeaderParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.ACCEPTED);
+        User user = userDAO.getUser(token).get();
+        List<User> bros = brotherhoodDAO.getBrotherhoods(user, Brotherhood.Brolationship.ACCEPTED);
         ArrayList<String> brosUsernames = new ArrayList<String>();
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());
@@ -121,7 +124,8 @@ public class BrotherhoodService {
     @GET
     @Path("/awaiting_bros")
     public Response getAwaitingBrotherhood(@HeaderParam("token") String token) {
-        List<User> bros = brotherhoodDAO.getBrotherhoods(token, Brotherhood.Brolationship.AWAITING);
+        User user = userDAO.getUser(token).get();
+        List<User> bros = brotherhoodDAO.getBrotherhoods(user, Brotherhood.Brolationship.AWAITING);
         ArrayList<String> brosUsernames = new ArrayList<String>();
         for (User bro : bros) {
             brosUsernames.add(bro.getUsername());
