@@ -73,16 +73,15 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
     /**
      * Gets GPS distance between two users by their username
      *
-     * @param username  an username
-     * @param username2 a second username
+     * @param user  an user
+     * @param user2 a second user
      * @return double distance or NaN
      */
-    public Double getDistance(String username, String username2) {
-        Geolocation geo = getLastLocation(username);
-        Geolocation geo2 = getLastLocation(username2);
-
+    public Double getDistance(User user, User user2) {
+        Geolocation geo = getLastLocation(user.getUsername());
+        Geolocation geo2 = getLastLocation(user2.getUsername());
         if (geo == null || geo2 == null){
-            return null;
+            return Double.parseDouble(null);
         }
         double latUser = (geo.getLat() * Math.PI / 180);
         double lngUser = (geo.getLng() * Math.PI / 180);
@@ -107,18 +106,17 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @return HashMap<String ,   Double>
      */
     public HashMap<String, Double> getBrosDistance(String token, List<User> bros) {
-
-
-        HashMap<String, Double> mapDistance = new HashMap<String, Double>();
+        HashMap<String, Double> mapDistance = new HashMap<>();
         Optional<User> userQuery = getDatastore().createQuery(User.class)
                 .field("token").equal(token)
                 .asList().stream().findAny();
+
         if (userQuery.isPresent()) {
             for (User bro : bros) {
                 if (userQuery.get().isLocalizable() &&
                         bro.isLocalizable() &&
-                        this.getDistance(userQuery.get().getUsername(), bro.getUsername()) != null) {
-                    mapDistance.put(bro.getUsername(), this.getDistance(userQuery.get().getUsername(), bro.getUsername()));
+                        this.getDistance(userQuery.get(), bro) != null) {
+                    mapDistance.put(bro.getUsername(), this.getDistance(userQuery.get(), bro));
                 }
 
             }
@@ -147,6 +145,4 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         }
         return mapPositions;
     }
-
-
 }

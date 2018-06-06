@@ -85,7 +85,7 @@ public class GeolocationService {
     @POST
     @Path("/distance")
     public Response getDistance(List<User> users) {
-        double distance = geolocationDAO.getDistance(users.get(0).getUsername(), users.get(1).getUsername());
+        double distance = geolocationDAO.getDistance(users.get(0), users.get(1));
         System.out.println(distance);
         try {
             JsonObject tokenJSON = new JsonObject();
@@ -107,16 +107,21 @@ public class GeolocationService {
     @GET
     @Path("/get_bros_distance")
     public Response getBrosDistance(@HeaderParam("token") String token) {
+        User user = userDAO.getUser(token).get();
         List<User> bros = brotherhoodDAO.getBrotherhoods(
-                userDAO.getUser(token).get(),
+                user,
                 Brotherhood.Brolationship.ACCEPTED
         );
+        System.out.println(bros);
         HashMap<String, Double> distance = geolocationDAO.getBrosDistance(token, bros);
+        System.out.println(distance.size());
         String resp = new Gson().toJson(distance);
         if (!distance.isEmpty()) {
             return Response.status(Response.Status.OK).entity(resp).build();
         }
-        return Response.status(Response.Status.FORBIDDEN).build();
+        else{
+            return Response.status(Response.Status.NO_CONTENT).entity(resp).build();
+        }
     }
 
 

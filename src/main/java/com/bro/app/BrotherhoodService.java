@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Manage a friendship between two users
@@ -143,4 +144,25 @@ public class BrotherhoodService {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
+
+
+
+    /**
+     * Gets all users who aren't in brotherhood for a given user
+     *
+     * @return List of Users in JSON or HTTP Status 400
+     */
+    @GET
+    @Path("/not_bros")
+    public Response getNotBros(@HeaderParam("token") String token) {
+        Optional<User> user = userDAO.getUser(token);
+        if(user.isPresent()) {
+            List<User> notBros = brotherhoodDAO.getNotBro(user.get());
+            List<String> notBrosStr = new ArrayList<>();
+            notBros.forEach(item -> notBrosStr.add(item.getUsername()));
+            return Response.status(Response.Status.OK).entity(new Gson().toJson(notBrosStr)).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
 }
