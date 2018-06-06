@@ -134,6 +134,7 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                 .field("token").equal(token);
 
         if(user.getPassword() != null) {
+            user.encrypt();
             UpdateOperations<User> ops = getDatastore()
                     .createUpdateOperations(User.class)
                     .set("username", user.getUsername())
@@ -142,7 +143,6 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                     .set("email", user.getEmail())
                     .set("password", user.getPassword())
                     .set("localizable", user.isLocalizable());
-            query.get().encrypt();
             return update(query, ops);
         }
         else {
@@ -153,7 +153,6 @@ public class UserDAO extends BasicDAO<User, ObjectId> {
                     .set("lastName", user.getLastName())
                     .set("email", user.getEmail())
                     .set("localizable", user.isLocalizable());
-            query.get().encrypt();
             return update(query, ops);
         }
     }
