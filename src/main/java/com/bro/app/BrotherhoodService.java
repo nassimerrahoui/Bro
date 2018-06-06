@@ -7,6 +7,7 @@ import com.bro.entity.User;
 import com.google.gson.Gson;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -25,7 +26,7 @@ public class BrotherhoodService {
     private BrotherhoodDAO brotherhoodDAO = new BrotherhoodDAO(BroApp.getDatastore());
     private UserDAO userDAO = new UserDAO(BroApp.getDatastore());
 
-    
+
     @POST
     @Path("/create")
     public Response create(@HeaderParam("token") String token, User receiver) {
@@ -58,8 +59,9 @@ public class BrotherhoodService {
                 }
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
-        catch (Exception e) { return Response.status(Response.Status.FORBIDDEN).build(); }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
@@ -78,8 +80,9 @@ public class BrotherhoodService {
                 }
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
-        catch (Exception e) { return Response.status(Response.Status.FORBIDDEN).build(); }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
 
@@ -124,13 +127,13 @@ public class BrotherhoodService {
         try {
             if (!bros.isEmpty()) {
                 return Response.ok(new Gson().toJson(brosUsernames)).build();
+            } else {
+                return Response.status(Response.Status.NO_CONTENT).build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
-
 
 
     /**
@@ -142,7 +145,7 @@ public class BrotherhoodService {
     @Path("/not_bros")
     public Response getNotBros(@HeaderParam("token") String token) {
         Optional<User> user = userDAO.getUser(token);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             List<User> notBros = brotherhoodDAO.getNotBro(user.get());
             List<String> notBrosStr = new ArrayList<>();
             notBros.forEach(item -> notBrosStr.add(item.getUsername()));

@@ -101,7 +101,7 @@ public class User {
 
     public void setDefaultValue(){
         if(this.localizable == null){
-            this.localizable = false;
+            this.localizable = true;
         }
 
     }

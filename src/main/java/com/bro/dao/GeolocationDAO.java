@@ -10,6 +10,7 @@ import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
+import javax.swing.text.html.Option;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -65,8 +66,8 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @param username a username
      * @return Geolocation
      */
-    public Geolocation getLastLocation(String username) {
-        return this.getNLastLocations(username, 1).get(0);
+    public Optional<Geolocation> getLastLocation(String username) {
+        return Optional.ofNullable(this.getNLastLocations(username, 1).get(0));
     }
 
 
@@ -78,15 +79,15 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * @return double distance or NaN
      */
     public Double getDistance(User user, User user2) {
-        Geolocation geo = getLastLocation(user.getUsername());
-        Geolocation geo2 = getLastLocation(user2.getUsername());
-        if (geo == null || geo2 == null){
-            return Double.parseDouble(null);
+        Optional<Geolocation> geo = getLastLocation(user.getUsername());
+        Optional<Geolocation> geo2 = getLastLocation(user2.getUsername());
+        if (!geo.isPresent()|| !geo2.isPresent()){
+            return Double.NaN;
         }
-        double latUser = (geo.getLat() * Math.PI / 180);
-        double lngUser = (geo.getLng() * Math.PI / 180);
-        double latUser2 = (geo2.getLat() * Math.PI / 180);
-        double lngUser2 = (geo2.getLng() * Math.PI / 180);
+        double latUser = (geo.get().getLat() * Math.PI / 180);
+        double lngUser = (geo.get().getLng() * Math.PI / 180);
+        double latUser2 = (geo2.get().getLat() * Math.PI / 180);
+        double lngUser2 = (geo2.get().getLng() * Math.PI / 180);
         double dlong = (lngUser2 - lngUser);
         double dlat = (latUser2 - latUser);
 
@@ -101,26 +102,20 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * Takes an user and his bros. Then calculates distance in km
      * between each of them who activated isLocalizable option.
      *
-     * @param token a token of an user
+     * @param user an user
      * @param bros  a list of broship
      * @return HashMap<String ,   Double>
      */
-    public HashMap<String, Double> getBrosDistance(String token, List<User> bros) {
+    public HashMap<String, Double> getBrosDistance(User user, List<User> bros) {
         HashMap<String, Double> mapDistance = new HashMap<>();
-        Optional<User> userQuery = getDatastore().createQuery(User.class)
-                .field("token").equal(token)
-                .asList().stream().findAny();
-
-        if (userQuery.isPresent()) {
             for (User bro : bros) {
-                if (userQuery.get().isLocalizable() &&
+                if (user.isLocalizable() &&
                         bro.isLocalizable() &&
-                        this.getDistance(userQuery.get(), bro) != null) {
-                    mapDistance.put(bro.getUsername(), this.getDistance(userQuery.get(), bro));
+                        !this.getDistance(user, bro).isNaN()) {
+                    mapDistance.put(bro.getUsername(), this.getDistance(user, bro));
                 }
 
             }
-        }
         return mapDistance;
     }
 
@@ -140,7 +135,11 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
 
         if (userQuery.isPresent()) {
             for (User bro : bros) {
-                mapPositions.put(bro.getUsername(), getLastLocation(bro.getUsername()));
+                Optional<Geolocation> location = getLastLocation(bro.getUsername());
+                if (location.isPresent()){
+                    mapPositions.put(bro.getUsername(), location.get());
+                }
+
             }
         }
         return mapPositions;
