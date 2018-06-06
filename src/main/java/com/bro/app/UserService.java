@@ -186,4 +186,23 @@ public class UserService {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
+    /**
+     * Gets all users
+     *
+     * @return List of Users in JSON or HTTP Status 400
+     */
+    @GET
+    @Path("/all")
+    public Response getAllUsers() {
+        List<User> users = userDAO.getAllUsers();
+        if(!users.isEmpty()){
+            List<String> usersString = new ArrayList<>();
+            for (User user: users) {
+                usersString.add(user.getUsername());
+            }
+            return Response.status(Response.Status.OK).entity(new Gson().toJson(usersString)).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
 }

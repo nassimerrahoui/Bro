@@ -1,5 +1,6 @@
 package com.bro.dao;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +17,17 @@ import org.mongodb.morphia.query.UpdateResults;
 public class UserDAO extends BasicDAO<User, ObjectId> {
     public UserDAO(Datastore ds) {
         super(ds);
+    }
+
+
+    /**
+     * Gets all users
+     *
+     * @return List<User>
+     */
+    public List<User> getAllUsers() {
+        return createQuery()
+                .asList();
     }
 
     /**
