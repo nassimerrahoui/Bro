@@ -18,6 +18,7 @@ import org.mongodb.morphia.Key;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -111,7 +112,7 @@ public class GeolocationService {
                 user.get(),
                 Brotherhood.Brolationship.ACCEPTED
         );
-        HashMap<String, Double> distance = geolocationDAO.getBrosDistance(user.get(), bros);
+        HashMap<String, BigDecimal> distance = geolocationDAO.getBrosDistance(user.get(), bros);
         String resp = new Gson().toJson(distance);
         if (!distance.isEmpty()) {
             return Response.status(Response.Status.OK).entity(resp).build();

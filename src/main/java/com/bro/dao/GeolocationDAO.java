@@ -8,9 +8,9 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +43,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * associated with this user using the timestamp creation
      *
      * @param username a username
-     * @param nbGeo number of geolocation to be returned
+     * @param nbGeo    number of geolocation to be returned
      * @return List<Geolocation>
      */
     public List<Geolocation> getNLastLocations(String username, int nbGeo) {
@@ -81,7 +81,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
     public Double getDistance(User user, User user2) {
         Optional<Geolocation> geo = getLastLocation(user.getUsername());
         Optional<Geolocation> geo2 = getLastLocation(user2.getUsername());
-        if (!geo.isPresent()|| !geo2.isPresent()){
+        if (!geo.isPresent() || !geo2.isPresent()) {
             return Double.NaN;
         }
         double latUser = (geo.get().getLat() * Math.PI / 180);
@@ -103,19 +103,21 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
      * between each of them who activated isLocalizable option.
      *
      * @param user an user
-     * @param bros  a list of broship
-     * @return HashMap<String ,   Double>
+     * @param bros a list of broship
+     * @return HashMap<String       ,               Double>
      */
-    public HashMap<String, Double> getBrosDistance(User user, List<User> bros) {
-        HashMap<String, Double> mapDistance = new HashMap<>();
-            for (User bro : bros) {
-                if (user.isLocalizable() &&
-                        bro.isLocalizable() &&
-                        !this.getDistance(user, bro).isNaN()) {
-                    mapDistance.put(bro.getUsername(), this.getDistance(user, bro));
-                }
-
+    public HashMap<String, BigDecimal> getBrosDistance(User user, List<User> bros) {
+        HashMap<String, BigDecimal> mapDistance = new HashMap<>();
+        for (User bro : bros) {
+            if (user.isLocalizable() &&
+                    bro.isLocalizable() &&
+                    !this.getDistance(user, bro).isNaN()) {
+                BigDecimal dist = BigDecimal.valueOf(this.getDistance(user, bro))
+                        .setScale(2, RoundingMode.HALF_UP);
+                mapDistance.put(bro.getUsername(), dist);
             }
+
+        }
         return mapDistance;
     }
 
@@ -136,7 +138,7 @@ public class GeolocationDAO extends BasicDAO<Geolocation, ObjectId> {
         if (userQuery.isPresent()) {
             for (User bro : bros) {
                 Optional<Geolocation> location = getLastLocation(bro.getUsername());
-                if (location.isPresent()){
+                if (location.isPresent()) {
                     mapPositions.put(bro.getUsername(), location.get());
                 }
 
